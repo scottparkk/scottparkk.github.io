@@ -27,8 +27,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3.0.1
         with:
           path: dist
 
@@ -41,4 +42,5 @@ jobs:
 
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        id: deployment
+        uses: actions/deploy-pages@v4
