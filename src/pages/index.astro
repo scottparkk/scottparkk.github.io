@@ -1,16 +1,9 @@
 ---
-
+import Layout from '../layouts/BaseLayout.astro';
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Home">
+  <section class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-4">Hi, I’m Scott Park</h1>
+    <p class="text-lg">Welcome to my portfolio. Here’s a taste of my creative and technical work.</p>
+  </section>
+</Layout>
