@@ -1,6 +1,49 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
+import FilmStrip from '../components/FilmStrip.astro';
+
+// Get images from my_life folder
+const myLifeImages = [
+  { src: '/images/my_life/7258267B-FE45-4EE2-B14C-30064282C69E.png', alt: 'My life photo' },
+  { src: '/images/my_life/DSCF0286.png', alt: 'My life photo' },
+  { src: '/images/my_life/Edited Korea New-083.png', alt: 'My life photo' },
+  { src: '/images/my_life/Edited Korea New-123.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_0018.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_0620.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_0687.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_2161.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_2911.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_2992.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_3543.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_4676.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_6500.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_9098_Original.png', alt: 'My life photo' },
+  { src: '/images/my_life/IMG_9245.png', alt: 'My life photo' },
+  { src: '/images/my_life/OllieScott-2.png', alt: 'My life photo' },
+  { src: '/images/my_life/beach1.png', alt: 'My life photo' },
+  { src: '/images/my_life/huzzshoot-29.png', alt: 'My life photo' },
+  { src: '/images/my_life/paper.png', alt: 'My life photo' },
+  { src: '/images/my_life/sunglowang.png', alt: 'My life photo' },
+];
+
+// Placeholder for albums - add images when ready
+const albumImages = [
+  { src: '/images/albums/Anti.png', alt: 'ANTI album cover', caption: 'ANTI — Rihanna' },
+  { src: '/images/albums/Billie.png', alt: 'Billie Eilish album cover', caption: 'HIT ME HARD AND SOFT — Billie Eilish' },
+  { src: '/images/albums/Malcolm1.png', alt: 'Mac Miller album cover', caption: 'Swimming — Mac Miller' },
+  { src: '/images/albums/Malcolm2.jpg', alt: 'Mac Miller album cover', caption: 'Circles — Mac Miller' },
+  { src: '/images/albums/Sza1.png', alt: 'SZA album cover', caption: 'Ctrl — SZA' },
+  { src: '/images/albums/Sza2.png', alt: 'SZA album cover', caption: 'SOS — SZA' },
+  { src: '/images/albums/badbunny.jpg', alt: 'Bad Bunny album cover', caption: 'Un Verano Sin Ti — Bad Bunny' },
+  { src: '/images/albums/black.png', alt: 'Album cover', caption: 'Black Panther: The Album — Various Artists' },
+  { src: '/images/albums/childish.jpg', alt: 'Childish Gambino album cover', caption: 'Awaken, My Love! — Childish Gambino' },
+  { src: '/images/albums/mariah.png', alt: 'Mariah Carey album cover', caption: 'Merry Christmas — Mariah Carey' },
+  { src: '/images/albums/marias1.jpg', alt: 'María album cover', caption: 'CINEMA — The Marías' },
+  { src: '/images/albums/marias2.jpg', alt: 'María album cover', caption: 'Submarine — The Marías' },
+  { src: '/images/albums/newjeans.jpg', alt: 'NewJeans album cover', caption: 'Get Up — NewJeans' },
+  { src: '/images/albums/ravyn.png', alt: 'Ravyn Lenae album cover', caption: 'Bird\'s Eye — Ravyn Lenae' },
+];
 ---
 
 <Layout title="About">
@@ -35,6 +78,28 @@ import Nav from '../components/Nav.astro';
         </div>
       </header>
     </div>
+  </section>
+  
+  <!-- Personal Section -->
+  <div class="mx-auto max-w-[92%]">
+    <div class="w-full h-px bg-gray-300"></div>
+  </div>
+  <section class="mx-auto max-w-[92%] pt-4 pb-8">
+    <p class="personal-intro text-gray-400">It's not all about work.</p>
+    
+    <h2 class="personal-title">My Life</h2>
+    <div class="mt-3">
+      <FilmStrip images={myLifeImages} id="my-life" />
+    </div>
+    
+    {albumImages.length > 0 && (
+      <>
+        <h2 class="personal-title mt-8">Albums on repeat</h2>
+        <div class="mt-3">
+          <FilmStrip images={albumImages} id="albums" />
+        </div>
+      </>
+    )}
   </section>
 </Layout>
 
@@ -96,5 +161,17 @@ import Nav from '../components/Nav.astro';
     font-size: var(--text-base, 0.9rem);
     color: var(--color-text-secondary, #525252);
     line-height: 1.35;
+  }
+  
+  .personal-intro {
+    font-size: var(--text-base, 0.9rem);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+  
+  .personal-title {
+    font-size: var(--text-base, 0.9rem);
+    font-weight: 500;
+    color: var(--color-text-primary, #1e1e1e);
   }
 </style>

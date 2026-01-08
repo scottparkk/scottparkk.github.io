@@ -1,0 +1,349 @@
+---
+interface ImageItem {
+  src: string;
+  alt?: string;
+  caption?: string;
+}
+
+interface Props {
+  images: ImageItem[];
+  id: string;
+}
+
+const { images, id } = Astro.props;
+---
+
+<div class="film-strip-wrapper" data-strip-id={id}>
+  <div class="film-strip">
+    {images.map((img, index) => (
+      <button 
+        class="film-strip-item"
+        data-index={index}
+        aria-label={img.caption || img.alt || `View image ${index + 1}`}
+      >
+        <img 
+          src={img.src} 
+          alt={img.alt || ''} 
+          loading="lazy" 
+          decoding="async"
+        />
+      </button>
+    ))}
+  </div>
+</div>
+
+<!-- Lightbox for this strip -->
+<div id={`lightbox-${id}`} class="strip-lightbox-overlay" data-lightbox-id={id}>
+  <div class="strip-lightbox-container">
+    <button class="strip-lightbox-close" aria-label="Close lightbox">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    
+    <button class="strip-lightbox-nav strip-lightbox-prev" aria-label="Previous image">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    
+    <button class="strip-lightbox-nav strip-lightbox-next" aria-label="Next image">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+    
+    <div class="strip-lightbox-content">
+      <img class="strip-lightbox-image" src="" alt="" />
+      <div class="strip-lightbox-caption"></div>
+      <div class="strip-lightbox-counter"></div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ images, id }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const wrapper = document.querySelector(`[data-strip-id="${id}"]`);
+    const lightbox = document.getElementById(`lightbox-${id}`);
+    if (!wrapper || !lightbox) return;
+    
+    const items = wrapper.querySelectorAll('.film-strip-item');
+    const closeBtn = lightbox.querySelector('.strip-lightbox-close');
+    const prevBtn = lightbox.querySelector('.strip-lightbox-prev');
+    const nextBtn = lightbox.querySelector('.strip-lightbox-next');
+    const image = lightbox.querySelector('.strip-lightbox-image');
+    const caption = lightbox.querySelector('.strip-lightbox-caption');
+    const counter = lightbox.querySelector('.strip-lightbox-counter');
+    
+    let currentIndex = 0;
+    const totalImages = images.length;
+    
+    // Hide nav if only one image
+    if (totalImages <= 1) {
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
+    
+    function openLightbox(index) {
+      currentIndex = index;
+      const img = images[index];
+      image.src = img.src;
+      image.alt = img.alt || '';
+      caption.textContent = img.caption || '';
+      counter.textContent = `${index + 1} / ${totalImages}`;
+      
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % totalImages;
+      openLightbox(currentIndex);
+    }
+    
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+      openLightbox(currentIndex);
+    }
+    
+    // Click handlers for strip items
+    items.forEach((item, i) => {
+      item.addEventListener('click', () => openLightbox(i));
+    });
+    
+    closeBtn.addEventListener('click', closeLightbox);
+    prevBtn.addEventListener('click', prevImage);
+    nextBtn.addEventListener('click', nextImage);
+    
+    // Close on background click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      
+      switch (e.key) {
+        case 'Escape':
+          closeLightbox();
+          break;
+        case 'ArrowLeft':
+          prevImage();
+          break;
+        case 'ArrowRight':
+          nextImage();
+          break;
+      }
+    });
+  });
+</script>
+
+<style>
+  .film-strip-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+  
+  .film-strip-wrapper::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .film-strip-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .film-strip-wrapper::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+  
+  .film-strip {
+    display: flex;
+    gap: 0.5rem;
+    height: 120px;
+    width: max-content;
+  }
+  
+  .film-strip-item {
+    flex-shrink: 0;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  
+  .film-strip-item:hover {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+  
+  .film-strip-item img {
+    height: 100%;
+    width: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 0.25rem;
+  }
+  
+  /* Lightbox Styles */
+  .strip-lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .strip-lightbox-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .strip-lightbox-container {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .strip-lightbox-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  .strip-lightbox-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  }
+  
+  .strip-lightbox-caption {
+    color: white;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    max-width: 80vw;
+  }
+  
+  .strip-lightbox-counter {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .strip-lightbox-close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 1001;
+  }
+  
+  .strip-lightbox-close:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  
+  .strip-lightbox-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 1001;
+  }
+  
+  .strip-lightbox-nav:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  
+  .strip-lightbox-prev {
+    left: 1rem;
+  }
+  
+  .strip-lightbox-next {
+    right: 1rem;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .film-strip {
+      height: 100px;
+    }
+    
+    .strip-lightbox-close {
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    
+    .strip-lightbox-nav {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    
+    .strip-lightbox-prev {
+      left: 0.5rem;
+    }
+    
+    .strip-lightbox-next {
+      right: 0.5rem;
+    }
+    
+    .strip-lightbox-image {
+      max-height: 70vh;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .film-strip-item:hover { transform: none; }
+    .strip-lightbox-overlay { transition: none; }
+  }
+</style>
