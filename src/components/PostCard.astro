@@ -1,0 +1,28 @@
+---
+interface Props {
+  post: any;
+  compact?: boolean;
+  showTags?: boolean;
+}
+const { post, compact = false, showTags = true } = Astro.props as Props;
+const p = post;
+---
+<article class={compact ? 'group card p-4' : 'group card'}>
+  <div class="mb-4">
+    <div class="badge badge-writing mb-3">Writing</div>
+    <h3 class="text-xl font-semibold tracking-tight mb-2 group-hover:text-purple-600 transition-colors heading-display">
+      <a href={`/blog/${p.slug}`} class="stretched-link">{p.data.title}</a>
+    </h3>
+    <p class="meta mb-3">{p.data.date.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric'})}</p>
+  </div>
+  <p class="text-gray-600 mb-4 leading-relaxed">{p.data.summary}</p>
+  {showTags && p.data.tags && p.data.tags.length > 0 && (
+    <div class="flex flex-wrap gap-2">
+      {p.data.tags.slice(0,3).map((t: string) => <span class="tag variant-soft">{t}</span>)}
+    </div>
+  )}
+</article>
+
+<style>
+  .variant-soft { opacity:.85 }
+</style>

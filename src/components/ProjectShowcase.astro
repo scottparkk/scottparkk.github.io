@@ -1,0 +1,193 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { buildImageSet } from '../lib/image';
+interface Props { project: CollectionEntry<'projects'>; index?: number }
+const { project, index = 0 } = Astro.props as Props;
+const p = project.data;
+
+// Focal point for image positioning
+const focus = p.coverFocus || (
+  typeof p.coverFocusX === 'number' && typeof p.coverFocusY === 'number'
+    ? `${p.coverFocusX}% ${p.coverFocusY}%`
+    : 'center top'
+);
+
+// Show up to first 6 tags
+const tagList = (p.tags || []).slice(0, 6);
+const slug = project.id.replace(/^projects\//,'').replace(/\.(md|mdx)$/i,'');
+---
+<article class="showcase" data-tags={(p.tags || []).join(' ').toLowerCase()}>
+  <!-- Top grey divider line -->
+  <div class="divider-line"></div>
+  
+  <!-- Title outside image -->
+  <h3 class="project-title">
+    <a href={`/projects/${slug}`}>{p.title}</a>
+  </h3>
+  
+  <!-- Role and Year row -->
+  <div class="meta-row">
+    <span class="role">{p.role || 'Project'}</span>
+    <span class="year">{p.year}</span>
+  </div>
+  
+  <!-- Image container with grey border -->
+  <a href={`/projects/${slug}`} class="media-container" aria-label={p.title}>
+    <div class="media" style={`--focus:${focus}`}>
+      {p.cover && (async () => {
+        const img = await buildImageSet({
+          src: p.cover!,
+          alt: p.coverAlt || p.title,
+          loading: index < 3 ? 'eager' : 'lazy',
+          sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+        });
+        return (
+          <img {...img} />
+        );
+      })()}
+      
+      <!-- Tags overlay on image -->
+      <div class="tags-overlay">
+        <ul class="tag-list" aria-label="Type and Tags">
+          <li class="tag type-tag">{p.type}</li>
+          {tagList.map(t => <li class="tag regular-tag">{t}</li>)}
+          {p.tags && p.tags.length > tagList.length && (
+            <li class="tag regular-tag more">+{p.tags.length - tagList.length}</li>
+          )}
+        </ul>
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  /* Top grey divider line spanning column width */
+  .divider-line {
+    width: 100%;
+    height: 1px;
+    background: #d1d5db;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Title - black Inter font */
+  .project-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: var(--text-sm, 0.8rem);
+    font-weight: 500;
+    line-height: 1.3;
+    margin: 0;
+    color: var(--color-text-primary, #1e1e1e);
+  }
+  
+  .project-title a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+  }
+  
+  .project-title a:hover {
+    color: var(--color-text-muted, #737373);
+  }
+  
+  /* Meta row - role left, year right */
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: var(--text-xs, 0.7rem);
+    color: var(--color-text-muted, #737373);
+    margin-bottom: 0.35rem;
+  }
+  
+  .role, .year {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  
+  /* Media container - no border */
+  .media-container {
+    display: block;
+    text-decoration: none;
+    border-radius: 0.15rem;
+    overflow: hidden;
+  }
+  
+  .media {
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+  
+  .media img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: var(--focus);
+    transition: transform 0.6s cubic-bezier(.19,1,.22,1);
+  }
+  
+  .media-container:hover .media img {
+    transform: scale(1.03);
+  }
+  
+  /* Tags overlay positioned at top of image */
+  .tags-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0.6rem;
+    pointer-events: none;
+  }
+  
+  .tag-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .tag {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.45rem;
+    border-radius: 0.15rem;
+  }
+  
+  /* Type tag - black background with white text */
+  .type-tag {
+    background: var(--color-text-primary, #1e1e1e);
+    color: #fff;
+    border: none;
+  }
+  
+  /* Regular tags - subtle white background for readability */
+  .regular-tag {
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--color-text-secondary, #525252);
+    border: none;
+  }
+  
+  .regular-tag.more {
+    opacity: 0.8;
+  }
+  
+  /* Hide filtered items */
+  :global(.showcase.hidden) {
+    display: none !important;
+  }
+</style>

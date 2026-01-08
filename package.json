@@ -7,18 +7,23 @@
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "gh-pages -d dist",
-    "astro": "astro"
+    "astro": "astro",
+    "validate:content": "node scripts/validate-content.mjs",
+    "check:images": "node scripts/check-missing-images.mjs",
+    "check": "npm run validate:content && npm run check:images && npm run build",
+    "scaffold:projects": "node scripts/scaffold-projects.mjs",
+    "publish:projects": "node scripts/publish-projects.mjs"
   },
   "dependencies": {
     "astro": "^5.10.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^24.0.4",
     "autoprefixer": "^10.4.21",
     "gh-pages": "^6.3.0",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.13",
     "typescript": "^5.8.3"
   }
 }

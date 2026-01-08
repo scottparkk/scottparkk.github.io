@@ -1,0 +1,82 @@
+---
+import { buildImageSet, shouldPriorityLoad } from '../lib/image';
+
+interface Props {
+  project: any;
+  index?: number; // position in a list to decide priority loading
+  showTypeBadge?: boolean;
+  showTags?: boolean;
+  compact?: boolean;
+}
+const { project, index = 0, showTypeBadge = true, showTags = true, compact = false } = Astro.props as Props;
+const p = project;
+const typeBadgeClass = p.data.type === 'creative' ? 'badge badge-creative' : 'badge badge-technical';
+
+let coverImg: any = null;
+if (p.data.cover) {
+  const creative = p.data.type === 'creative';
+  coverImg = await buildImageSet({
+    src: p.data.cover,
+    alt: p.data.coverAlt || p.data.title,
+    priority: shouldPriorityLoad(index, Astro.url.pathname),
+    class: `project-card-cover-img ${creative ? 'contain' : 'cover'}`
+  });
+}
+---
+<article class={compact ? 'group card p-4' : 'group card'} data-tags={(p.data.tags || []).join(' ').toLowerCase()}>
+  {coverImg && (
+    <figure class="project-card-cover mb-4">
+      <img {...coverImg} />
+    </figure>
+  )}
+  <div class="mb-4">
+    {showTypeBadge && <div class={typeBadgeClass + ' mb-3'}>{p.data.type === 'creative' ? 'Creative' : 'Technical'}</div>}
+    <h3 class="text-xl font-semibold tracking-tight mb-2 group-hover:text-blue-600 transition-colors heading-display">
+      <a href={`/projects/${p.slug}`} class="stretched-link">{p.data.title}</a>
+    </h3>
+    <p class="meta mb-3">{p.data.year} • {p.data.role || 'Project'}</p>
+  </div>
+  {p.data.summary && (
+    <p class="project-summary text-gray-600 leading-relaxed">{p.data.summary}</p>
+  )}
+  <div class="flex flex-wrap gap-2 mb-3">
+    {p.data.stack.slice(0,3).map((tech: string) => <span class="stack-tag">{tech}</span>)}
+    {p.data.stack.length > 3 && <span class="tag">+{p.data.stack.length - 3} more</span>}
+  </div>
+  {showTags && p.data.tags && p.data.tags.length > 0 && (
+    <div class="flex flex-wrap gap-2">
+    {p.data.tags.map((t: string) => <span class="tag variant-soft cursor-pointer" data-filter-tag={t}>{t}</span>)}
+    </div>
+  )}
+</article>
+
+<style>
+  .variant-soft { opacity:.85 }
+  [data-filter-tag] { transition:background .15s, color .15s; }
+  [data-filter-tag]:hover { background:var(--tw-prose-invert-links, rgba(59,130,246,.15)); }
+  .project-card-cover { position:relative; width:100%; aspect-ratio:4/3; background:var(--color-surface-alt, #f4f4f5); border:1px solid #e5e7eb; border-radius:0.85rem; overflow:hidden; }
+  .project-card-cover-img { width:100%; height:100%; display:block; }
+  .project-card-cover-img.cover { object-fit:cover; }
+  .project-card-cover-img.contain { object-fit:contain; padding:0.75rem; background:rgba(255,255,255,0.6); }
+</style>
+<style>
+  /* Summary hover reveal (desktop / pointer devices) */
+  .project-summary { display:none; }
+  @media (min-width:641px) and (hover:hover) {
+    .project-summary { 
+      display:block; 
+      opacity:0; 
+      max-height:0; 
+      margin:0 0 1rem; 
+      transition:opacity .28s ease, max-height .28s ease; 
+    }
+    .group:hover .project-summary, .group:focus-within .project-summary { 
+      opacity:1; 
+      max-height:14rem; /* plenty for a few lines */
+    }
+  }
+  /* Users that prefer reduced motion: just show it on large screens instead of animating */
+  @media (min-width:641px) and (prefers-reduced-motion: reduce) {
+    .project-summary { display:block; opacity:1; max-height:none; }
+  }
+</style>

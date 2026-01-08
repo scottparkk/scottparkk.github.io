@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+---
+
+<Layout title="About">
+  <Nav slot="header" />
+      <!-- Divider line -->
+  <div class="mx-auto max-w-[92%]">
+    <div class="w-full h-px bg-gray-300"></div>
+  </div>
+  <section class="mx-auto max-w-[92%] pt-2 pb-8">
+    <div class="mx-auto">
+      
+      <header class="mb-12 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 items-start">
+        <div class="contact-section">
+          <h1 class="section-title text-gray-400">Contact</h1>
+          <a href="mailto:scottpark@g.ucla.edu" class="contact-email">scottpark@g.ucla.edu</a>
+          
+          <p class="section-title text-gray-400 mt-6">Current</p>
+          <p class="contact-email">Systems Engineer at Universal Music Group</p>
+          
+          <p class="section-title text-gray-400 mt-6">Connect</p>
+          <a href="https://www.linkedin.com/in/scott-park-58737a224/" class="contact-email" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/scottparkk" class="contact-email" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="/scottpark_resume.pdf" class="contact-email" target="_blank" rel="noopener noreferrer">Resume</a>
+        </div>
+        <div class="about-text pr-12 md:pr-20 lg:pr-32">
+          <p class="headline">
+            I'm a <span class="font-code">full-stack developer</span> with a background in <span class="font-design">design</span>, specializing in frontend and building products that engage users.
+          </p>
+          <p class="body-text">
+            I studied Computer Science at the University of California, Los Angeles and found a deep interest in the capabilities of programming. Beyond the technical experience I obtained with this degree, I poured my extra time into the creative & leadership-driven communities on campus: I was the Software Development Manager of our school's radio station, I led marketing campaigns for a event-producing leadership organization, and obtained 4 years of experience working as a graphic designer for the school. My background gives me a different perspective on development and I hope to blend my experiences, technical or creative, in any future work I do.
+          </p>
+        </div>
+      </header>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Design";
+    src: url("/fonts/design.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  .font-code {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+  }
+  
+  .font-design {
+    font-family: "Design", serif;
+    font-size: 1.15em;
+  }
+  
+  .section-title {
+    font-size: var(--text-base, 0.9rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  
+  .contact-email {
+    font-size: var(--text-base, 0.9rem);
+    color: var(--color-text-primary, #1e1e1e);
+    text-decoration: none;
+    display: block;
+    margin-top: 0.1rem;
+  }
+  
+  .contact-email:hover {
+    text-decoration: underline;
+  }
+  
+  .about-text .headline {
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-text-primary, #1e1e1e);
+    margin-bottom: 0.5rem;
+  }
+  
+  .about-text .body-text {
+    font-size: var(--text-base, 0.9rem);
+    color: var(--color-text-secondary, #525252);
+    line-height: 1.35;
+  }
+</style>

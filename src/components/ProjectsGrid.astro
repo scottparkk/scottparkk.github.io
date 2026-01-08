@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectShowcase from './ProjectShowcase.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+  startIndex?: number; // allow offset if multiple grids on same page
+}
+const { projects = [], startIndex = 0 } = Astro.props as Props;
+---
+<div class="showcase-grid" data-project-grid>
+  {projects.map((p, i) => <ProjectShowcase project={p} index={startIndex + i} />)}
+</div>
+
+<style>
+  /* Three column grid with spacing */
+  .showcase-grid { 
+    display: grid; 
+    gap: 1.5rem; 
+    grid-template-columns: repeat(3, 1fr); 
+    align-items: start; 
+  }
+  
+  @media (max-width: 1024px) {
+    .showcase-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  
+  @media (max-width: 640px) {
+    .showcase-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  }
+</style>

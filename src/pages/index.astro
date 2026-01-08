@@ -1,9 +1,69 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
+import { getCollection } from 'astro:content';
+import { sortProjects, groupByType } from '../lib/project-sort';
+
+// Collections (non-draft)
+const allProjects = await getCollection('projects', ({ data }) => !data.draft);
+
+// Consistent project ordering - technical first, then creative
+const sortedProjects = sortProjects(allProjects);
+const { creative: creativeProjects, technical: technicalProjects } = groupByType(sortedProjects);
+const allProjectsOrdered = [...technicalProjects, ...creativeProjects];
 ---
+
 <Layout title="Home">
-  <section class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-4">Hi, I’m Scott Park</h1>
-    <p class="text-lg">Welcome to my portfolio. Here’s a taste of my creative and technical work.</p>
+  <Nav slot="header" />
+    <!-- Divider line -->
+  <div class="mx-auto max-w-[92%]">
+    <div class="w-full h-px bg-gray-300"></div>
+  </div>
+
+  <!-- Hero / Intro - Two column layout -->
+  <section class="mx-auto max-w-[92%] pt-2 pb-8">
+    <div class="mx-auto">
+      <header class="mb-12 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 items-baseline">
+        <h1 class="section-title">Welcome</h1>
+        <p class="section-text">
+          I'm a full-stack developer and artist, blending my experience in coding with a creative edge to bring dynamic ideas to life. From my technical coding apps I've created to my graphic design work, I thrive off of exploring a project's development from the first spark of an idea to its final outcome.
+        </p>
+        <span>
+
+        </span>
+        <p class="section-text">
+          Explore all of my work below or by navigating to the Technical/Creative Projects sections above.
+        </p>
+      </header>
+    </div>
   </section>
+
+  <!-- All Projects Grid -->
+  <section class="mx-auto max-w-[92%] pt-2 pb-2">
+
+      <div class="pt-20 mt-6">
+        <ProjectsGrid projects={allProjectsOrdered} />
+      </div>
+      
+    </div>
+  </section>
+
 </Layout>
+
+<style>
+  .stretched-link::after { content:''; position:absolute; inset:0; z-index:1; }
+  
+  .section-title {
+    font-size: var(--text-base, 0.9rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-text-primary, #1e1e1e);
+  }
+  
+  .section-text {
+    font-size: var(--text-base, 0.9rem);
+    color: var(--color-text-secondary, #525252);
+    line-height: 1.5;
+  }
+</style>
