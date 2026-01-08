@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import { getCollection } from 'astro:content';
+import TagFilter from '../components/TagFilter.astro';
+import { extractBlogTags } from '../lib/tag-utils.ts';
+
+// Get all non-draft blog posts, sorted by date descending
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const blogTags = extractBlogTags(sortedPosts);
+---
+
+<Layout title="Blog">
+  <Nav slot="header" />
+  <section class="container mx-auto px-6 pt-10 md:pt-12 pb-8 max-w-6xl">
+  <h1 class="text-4xl font-medium mb-8 text-gray-900">Blog</h1>
+    
+    <TagFilter tags={blogTags} kind="post" />
+    {sortedPosts.length > 0 ? (
+      <div class="space-y-8 mt-8">
+        {sortedPosts.map((post) => (
+          <article class="pb-8 border-b border-neutral-200 last:border-b-0" data-tags={(post.data.tags||[]).join(' ').toLowerCase()}>
+            <h2 class="text-2xl font-semibold mb-3">
+              <a href={`/blog/${post.slug}`} class="hover:underline">
+                {post.data.title}
+              </a>
+            </h2>
+            
+      <div class="flex items-center gap-4 mb-4 meta">
+              <time datetime={post.data.date.toISOString()}>
+                {post.data.date.toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </time>
+              {post.data.updated && (
+        <span>• upd {post.data.updated.toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</span>
+              )}
+            </div>
+            
+            <p class="text-neutral-700 mb-4">
+              {post.data.summary}
+            </p>
+            
+            {post.data.tags && post.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-4">
+                {post.data.tags.map((tag) => (
+                  <span class="tag cursor-pointer" data-filter-tag={tag}>{tag}</span>
+                ))}
+              </div>
+            )}
+            
+            <a 
+              href={`/blog/${post.slug}`}
+              class="text-neutral-900 hover:underline font-medium"
+            >
+              Read more →
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-12">
+        <p class="text-neutral-600">
+          No blog posts yet. Check back soon for thoughts on development, design, and more!
+        </p>
+      </div>
+    )}
+  </section>
+</Layout>

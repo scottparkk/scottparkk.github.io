@@ -1,0 +1,230 @@
+---
+interface Props {
+  tags: string[];
+  paramName?: string;
+  label?: string;
+  kind?: string;
+}
+const {
+  tags = [],
+  paramName = 'tags',
+  label = 'Filter by tags',
+  kind = 'project',
+} = Astro.props as Props;
+const sorted = [...tags].sort();
+---
+{sorted.length > 0 && (
+  <div class="tag-filter" data-param={paramName} data-kind={kind} id={`tag-filter-${paramName}`}>
+    <div class="tag-bar" role="group" aria-label={label} data-tag-bar>
+      <button type="button" class="tag-chip is-all" data-all aria-pressed="true">ALL</button>
+      {sorted.map(t => (
+        <button type="button" class="tag-chip" data-tag={t} aria-pressed="false">{t.toUpperCase()}</button>
+      ))}
+    </div>
+    <div class="tag-filter-meta" aria-live="polite" data-count></div>
+  </div>
+)}
+
+<script is:inline>
+  (function() {
+    function initFilter(root) {
+      if (root.getAttribute('data-filter-initialized')) return;
+      root.setAttribute('data-filter-initialized', 'true');
+      
+      const paramName = root.getAttribute('data-param') || 'tags';
+      const kind = root.getAttribute('data-kind') || 'project';
+      const tagBar = root.querySelector('[data-tag-bar]');
+      if (!tagBar) return;
+      
+      const allBtn = tagBar.querySelector('[data-all]');
+      const tagButtons = Array.from(tagBar.querySelectorAll('[data-tag]'));
+      const countEl = root.querySelector('[data-count]');
+      
+      // Find all filterable cards on the page
+      function getCards() {
+        return Array.from(document.querySelectorAll('[data-tags]'));
+      }
+      
+      const plural = (n, w) => n === 1 ? w : w + 's';
+      
+      // Get currently selected tags
+      function getSelectedTags() {
+        return tagButtons
+          .filter(b => b.getAttribute('aria-pressed') === 'true')
+          .map(b => b.getAttribute('data-tag').toLowerCase());
+      }
+      
+      // Update the count display
+      function updateCount() {
+        const list = getCards();
+        const visible = list.filter(c => !c.classList.contains('hidden')).length;
+        if (countEl) {
+          countEl.textContent = `${visible} of ${list.length} ${plural(list.length, kind)}`;
+        }
+      }
+      
+      // Run the filter
+      function runFilter() {
+        const activeTags = getSelectedTags();
+        const cards = getCards();
+        
+        if (activeTags.length === 0) {
+          // Show all
+          cards.forEach(c => c.classList.remove('hidden'));
+        } else {
+          // Filter: show cards that have ALL selected tags
+          cards.forEach(card => {
+            const cardTags = (card.getAttribute('data-tags') || '')
+              .toLowerCase()
+              .split(/\s+/)
+              .filter(Boolean);
+            const matches = activeTags.every(tag => cardTags.includes(tag));
+            card.classList.toggle('hidden', !matches);
+          });
+        }
+        
+        // Update "All" button state
+        if (allBtn) {
+          allBtn.setAttribute('aria-pressed', activeTags.length === 0 ? 'true' : 'false');
+        }
+        
+        // Update URL
+        const url = new URL(window.location.href);
+        if (activeTags.length) {
+          url.searchParams.set(paramName, activeTags.join(','));
+        } else {
+          url.searchParams.delete(paramName);
+        }
+        window.history.replaceState({}, '', url.toString());
+        
+        updateCount();
+      }
+      
+      // Toggle a tag button
+      function toggle(btn) {
+        const current = btn.getAttribute('aria-pressed') === 'true';
+        btn.setAttribute('aria-pressed', current ? 'false' : 'true');
+      }
+      
+      // Reset all filters
+      function reset() {
+        tagButtons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+        runFilter();
+      }
+      
+      // Event: "All" button
+      if (allBtn) {
+        allBtn.addEventListener('click', () => {
+          reset();
+        });
+      }
+      
+      // Event: Tag buttons - toggle and immediately filter
+      tagButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          toggle(btn);
+          runFilter();
+        });
+      });
+      
+      // Initialize from URL params
+      const params = new URLSearchParams(window.location.search);
+      const initTags = (params.get(paramName) || '')
+        .split(',')
+        .map(s => s.trim().toLowerCase())
+        .filter(Boolean);
+      
+      if (initTags.length) {
+        tagButtons.forEach(btn => {
+          const tag = btn.getAttribute('data-tag').toLowerCase();
+          if (initTags.includes(tag)) {
+            btn.setAttribute('aria-pressed', 'true');
+          }
+        });
+      }
+      
+      // Run initial filter
+      runFilter();
+    }
+    
+    function start() {
+      document.querySelectorAll('.tag-filter').forEach(el => initFilter(el));
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+</script>
+
+<style>
+  .tag-filter {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .tag-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0.25rem 0;
+  }
+  
+  .tag-bar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tag-chip {
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.85rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--color-text-muted, #737373);
+    border: 1px solid #d1d5db;
+    border-radius: 2rem;
+    transition: all 0.15s ease;
+  }
+  
+  .tag-chip:hover {
+    color: var(--color-text-primary, #1e1e1e);
+    border-color: #9ca3af;
+  }
+  
+  .tag-chip[aria-pressed="true"] {
+    background: var(--color-text-primary, #1e1e1e);
+    color: #fff;
+    border-color: var(--color-text-primary, #1e1e1e);
+  }
+  
+  .tag-chip.is-all {
+    font-weight: 700;
+  }
+  
+  .tag-filter-meta {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted, #737373);
+  }
+  
+  /* Hide filtered items */
+  :global([data-tags].hidden) {
+    display: none !important;
+  }
+</style>

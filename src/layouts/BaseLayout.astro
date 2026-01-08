@@ -2,6 +2,7 @@
 export interface Props { title?: string }
 const { title = 'Portfolio' } = Astro.props;
 import '../styles/global.css';
+import Nav from '../components/Nav.astro';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -9,11 +10,49 @@ import '../styles/global.css';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title} — Scott Park</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <!-- example: Open Sans from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="description" content="Portfolio of Scott Park – creative & technical projects, writing, and experiments." />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <link rel="preload" href="/fonts/inter-v19-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⚡</text></svg>"> 
+    <meta property="og:title" content={title + ' — Scott Park'} />
+    <meta property="og:description" content="Creative & technical portfolio of Scott Park." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://scottparkk.github.io" />
+    <meta name="twitter:card" content="summary" />
   </head>
-  <body class="font-sans">
-    <slot />
+  <body class="min-h-screen text-gray-900 antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-yellow-300 text-black px-4 py-2 rounded-lg font-medium z-50">Skip to content</a>
+  <header class="site-header sticky top-0 z-50">
+      <slot name="header">
+        <!-- If a page doesn't provide a header slot, show the standard Nav -->
+        <Nav />
+      </slot>
+    </header>
+    <main id="main" class="flex-1 pt-20"  >
+      <slot />
+    </main>
+    <footer class="mt-5 py-10">
+    <div class="max-w-[92%] mx-auto border-t border-gray-200 pt-6">
+      <div class="grid-2columns">
+        <div class="grid-2rows">
+          <p class="text-sm text-gray-400"> &copy; </p>
+          <p class="text-sm text-gray-800">{new Date().getFullYear()}</p>
+        </div>
+        <div class="grid-2rows">
+          <p class="text-sm text-gray-400">Designed & Developed by</p>
+          <p class="text-sm text-gray-800">Scott Park</p>
+        </div>
+      </div>
+    </div>
+  </footer>
   </body>
 </html>
+
+<style>
+  /* Header becomes a structural shell only; all visual glass now handled inside Nav. */
+  .site-header { background:transparent; border: none; }
+  .site-header::before, .site-header::after { display:none !important; }
+</style>
+
+<!-- Removed scroll densify script: nav now maintains constant size & transparency -->

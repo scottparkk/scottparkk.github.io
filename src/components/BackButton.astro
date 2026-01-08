@@ -1,0 +1,105 @@
+---
+interface Props {
+  href?: string;
+  label?: string;
+}
+
+const { href, label = 'BACK' } = Astro.props;
+
+// Use browser's back functionality if no specific href is provided
+const isHistoryBack = !href;
+---
+
+<div class="back-button-container">
+  {isHistoryBack ? (
+    <button id="back-button" class="back-button" aria-label={label}>
+      <span class="back-arrow">◀</span>
+      <span class="back-text">{label}</span>
+    </button>
+  ) : (
+    <a href={href} class="back-button" aria-label={label}>
+      <span class="back-arrow">◀</span>
+      <span class="back-text">{label}</span>
+    </a>
+  )}
+</div>
+
+<script>
+  // Handle browser back functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const backButton = document.getElementById('back-button');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        // Check if there's history to go back to
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          // Fallback to projects or blog page based on current URL
+          const path = window.location.pathname;
+          if (path.includes('/projects/')) {
+            window.location.href = '/projects';
+          } else if (path.includes('/blog/')) {
+            window.location.href = '/blog';
+          } else {
+            window.location.href = '/';
+          }
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .back-button-container {
+    margin-bottom: 2rem;
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: none;
+    color: #374151;
+    font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .back-button:hover {
+    color: #1f2937;
+  }
+
+  .back-arrow {
+    font-size: 0.8rem;
+    line-height: 1;
+    color: inherit;
+    transition: transform 0.2s ease;
+  }
+
+  .back-button:hover .back-arrow {
+    transform: translateX(-2px);
+  }
+
+  .back-text {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .back-button {
+      transition: none;
+    }
+    
+    .back-button:hover .back-arrow {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import { getCollection } from 'astro:content';
+import ProjectsGrid from '../../components/ProjectsGrid.astro';
+import TagFilter from '../../components/TagFilter.astro';
+import { extractProjectTags } from '../../lib/tag-utils.ts';
+import { PROJECT_TYPES, isValidProjectType, type ProjectType } from '../../lib/content-types.ts';
+import { sortProjects } from '../../lib/project-sort.ts';
+
+export async function getStaticPaths() {
+  // Pre-generate only valid project type routes
+  return PROJECT_TYPES.map((type) => ({ params: { type } }));
+}
+
+interface Props {
+  type: ProjectType;
+}
+
+const { type } = Astro.params as Props;
+
+// Guard (should not trigger because we only generate known paths, but defensive)
+if (!isValidProjectType(type)) {
+  throw new Error('Invalid project type');
+}
+
+// Fetch projects of this type
+const allProjects = await getCollection('projects', ({ data }) => !data.draft && data.type === type);
+const projects = sortProjects(allProjects);
+const tags = extractProjectTags(projects);
+
+const titleMap: Record<ProjectType, string> = {
+  creative: 'Creative Work',
+  technical: 'Technical Work',
+};
+
+const descriptionMap: Record<ProjectType, string> = {
+  creative: 'A collection of design, illustration, and visual storytelling work, focused on bringing ideas to life through color, composition, and narrative.',
+  technical: 'Systems engineering, web development, and software projects, emphasizing clean architecture, performance, and practical problem-solving.',
+};
+
+const pageTitle = titleMap[type];
+const pageDescription = descriptionMap[type];
+
+// Canonical URL
+const canonicalURL = new URL(`/projects/${type}`, Astro.site || 'https://scottparkk.github.io');
+
+// Identify the other type for quick switching
+const otherType = PROJECT_TYPES.find(t => t !== type)!;
+---
+
+<Layout title={pageTitle}>
+  <Fragment slot="head">
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:title" content={`${pageTitle} — Scott Park`} />
+    <meta property="og:description" content={`Selected ${type} work by Scott Park`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+  </Fragment>
+  
+  <Nav slot="header" />
+      <!-- Divider line -->
+  <div class="mx-auto max-w-[92%]">
+    <div class="w-full h-px bg-gray-300"></div>
+  </div>
+  <section class="mx-auto max-w-[92%] pt-2 pb-8">
+    <div class="mx-auto">
+      <header class="mb-12 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 items-baseline">
+        <h1 class="section-title">{pageTitle}</h1>
+        <p class="section-text">{pageDescription}</p>
+      </header>
+      
+      <!-- Divider line -->
+      <div class="w-full h-px bg-gray-300 mb-8"></div>
+      
+      <TagFilter tags={tags} />
+      {projects.length > 0 ? (
+        <div class="mt-10">
+          <ProjectsGrid projects={projects} />
+        </div>
+      ) : (
+        <div class="text-center py-20">
+          <div class="max-w-md mx-auto card">
+            <h2 class="text-2xl font-semibold mb-4">No {type} Projects Yet</h2>
+            <p class="text-gray-600">Content is being prepared. Check back soon!</p>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .stretched-link::after { content:''; position:absolute; inset:0; z-index:1; }
+  
+  .section-title {
+    font-size: var(--text-base, 0.9rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-text-primary, #1e1e1e);
+  }
+  
+  .section-text {
+    font-size: var(--text-base, 0.9rem);
+    color: var(--color-text-secondary, #525252);
+    line-height: 1.5;
+  }
+</style>

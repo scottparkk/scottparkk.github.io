@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import CategoryShowcaseCard from '../components/CategoryShowcaseCard.astro';
+import { getCollection } from 'astro:content';
+import ProjectCard from '../components/ProjectCard.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
+import { extractProjectTags } from '../lib/tag-utils.ts';
+import TagFilter from '../components/TagFilter.astro';
+import { sortProjects, groupByType } from '../lib/project-sort';
+
+// Get all non-draft projects
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const sortedProjects = sortProjects(projects);
+const { creative: creativeProjects, technical: technicalProjects } = groupByType(sortedProjects);
+const allTags = extractProjectTags(sortedProjects);
+---
+
+<Layout title="Projects">
+  <Nav slot="header" />
+  
+  <section class="mx-auto max-w-[92%] pt-10 md:pt-12 pb-8">
+    <div class="mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+        <div>
+          <h1 class="text-4xl font-medium tracking-tight mb-4 text-gray-900">Projects</h1>
+          <p class="text-xl text-gray-600 max-w-5xl leading-relaxed">Explore my work below! Filter to view either my Technical coding projects or my Creative design work.</p>
+        </div>
+      </div>
+      <div class="category-grid mb-16">
+        <CategoryShowcaseCard href="/projects/technical" label="Technical Projects" project={technicalProjects[0]} />
+        <CategoryShowcaseCard href="/projects/creative" label="Creative Projects" project={creativeProjects[0]} />
+      </div>
+      <!-- <div class="mt-2 mb-8">
+        <TagFilter tags={allTags} />
+      </div>
+      <div class="flex items-center mb-10">
+        <h2 class="text-xl font-semibold tracking-wide uppercase text-gray-600 letter-space">All Projects</h2>
+        <div class="ml-4 text-sm text-gray-500">{sortedProjects.length} total</div>
+      </div> -->
+      <!-- <ProjectsGrid projects={sortedProjects} />
+      <div class="h-20"></div>
+
+      {projects.length === 0 && (
+        <div class="text-center py-20">
+          <div class="max-w-md mx-auto bg-white rounded-xl border border-gray-200 p-12">
+            <h2 class="text-2xl font-semibold mb-4">No Projects Yet</h2>
+            <p class="text-gray-600">
+              Projects are being prepared. Check back soon for updates!
+            </p>
+          </div>
+        </div>
+      )}
+    </div> -->
+  </section>
+</Layout>
+
+<style>
+  .stretched-link::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+  .type-switch .type-chip { 
+    display:inline-flex; align-items:center; padding:0.4rem 0.8rem; font-size:0.65rem; line-height:1; 
+    border-radius:0.5rem; background:#fff; border:1px solid #d1d5db; font-weight:600; letter-spacing:.04em; text-transform:uppercase; 
+    color:#374151; font-family:"Roboto Mono", monospace; transition:background .15s, color .15s, border-color .15s; 
+  }
+  .type-switch .type-chip:hover { background:#f3f4f6; }
+  /* grid styling now lives in ProjectsGrid */
+  .letter-space { letter-spacing:.12em; }
+  /* Ensure the two category showcase cards render side-by-side (row) on larger screens */
+  .category-grid { display:grid; gap:0.2rem; grid-template-columns:1fr; }
+  @media (min-width:640px) { /* sm */
+    .category-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+</style>
+
+<!-- TagFilter provides its own inline script; legacy script removed. -->
