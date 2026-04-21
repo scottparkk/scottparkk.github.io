@@ -24,7 +24,7 @@ gallery:
   - src: "/images/projects/technical/Todogotchi/Todogotchi7.png"
     alt: "Todogotchi social features"
 draft: false
-order: 200
+order: 50
 ---
 
 ## Overview
