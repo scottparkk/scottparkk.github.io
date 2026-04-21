@@ -20,7 +20,7 @@ gallery:
   - src: "/images/projects/technical/Miffy/Miffy5.png"
     alt: "Miffy customization and shop"
 draft: false
-order: 500
+order: 30
 ---
 
 ## Overview
