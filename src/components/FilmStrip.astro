@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import { resolveImage, imageUrl } from '../lib/images';
+
 interface ImageItem {
   src: string;
   alt?: string;
@@ -11,19 +14,33 @@ interface Props {
 }
 
 const { images, id } = Astro.props;
+
+// Callers pass plain "/images/…" strings; resolve them here so pages stay
+// unaware of where assets physically live.
+const items = await Promise.all(
+  images.map(async (img) => ({
+    ...img,
+    asset: resolveImage(img.src),
+    full: await imageUrl(img.src, { width: 2000 }),
+  })),
+);
+// The lightbox sets src from client JS, so it needs plain URLs.
+const lightboxImages = items.map(({ full, alt, caption }) => ({ src: full, alt, caption }));
 ---
 
 <div class="film-strip-wrapper" data-strip-id={id}>
   <div class="film-strip">
-    {images.map((img, index) => (
+    {items.map((img, index) => (
       <button 
         class="film-strip-item"
         data-index={index}
         aria-label={img.caption || img.alt || `View image ${index + 1}`}
       >
-        <img 
-          src={img.src} 
+        <Image 
+          src={img.asset} 
           alt={img.alt || ''} 
+          widths={[200, 400, 800]}
+          sizes="(max-width: 640px) 40vw, 240px"
           loading="lazy" 
           decoding="async"
         />
@@ -61,7 +78,7 @@ const { images, id } = Astro.props;
   </div>
 </div>
 
-<script define:vars={{ images, id }}>
+<script define:vars={{ images: lightboxImages, id }}>
   document.addEventListener('DOMContentLoaded', () => {
     const wrapper = document.querySelector(`[data-strip-id="${id}"]`);
     const lightbox = document.getElementById(`lightbox-${id}`);

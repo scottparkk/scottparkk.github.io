@@ -3,6 +3,8 @@ import Layout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import BackButton from '../../components/BackButton.astro';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { resolveImage, absoluteImageUrl, imageUrl } from '../../lib/images';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', ({ data }) => !data.draft);
@@ -24,6 +26,23 @@ const listingLabel = project.data.type === 'creative' ? 'Creative Work' : 'Techn
 
 // canonical URL
 const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https://scottparkk.github.io');
+
+// og:image needs an absolute URL to a processed asset, not a source path.
+const ogImage = project.data.cover
+  ? await absoluteImageUrl(project.data.cover, Astro.site, { width: 1200 })
+  : undefined;
+
+// The gallery renders as <Image> (build-time srcset) but the lightbox swaps
+// src from client JS, so it also needs plain URLs to a single large variant.
+const gallery: any[] = project.data.gallery || [];
+const galleryImages = await Promise.all(
+  gallery.map(async (item) => ({
+    ...item,
+    asset: resolveImage(item.src),
+    full: await imageUrl(item.src, { width: 2000 }),
+  })),
+);
+const lightboxItems = galleryImages.map(({ full, alt, caption }) => ({ src: full, alt, caption }));
 ---
 
 <Layout title={project.data.title}>
@@ -33,9 +52,7 @@ const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https:
     <meta property="og:description" content={project.data.summary} />
     <meta property="og:type" content="article" />
     <meta property="og:url" content={canonicalURL} />
-    {project.data.cover && (
-      <meta property="og:image" content={new URL(project.data.cover, Astro.site || 'https://scottparkk.github.io')} />
-    )}
+    {ogImage && <meta property="og:image" content={ogImage} />}
   </Fragment>
   
   <Nav slot="header" />
@@ -123,18 +140,18 @@ const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https:
       <Content />
     </div>
 
-    {project.data.gallery && project.data.gallery.length > 0 && (
+    {galleryImages.length > 0 && (
       <section class="mt-16 gallery-section">
         <h2 class="text-2xl font-semibold mb-6 heading-display">Gallery</h2>
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {project.data.gallery.map((item: any, index: number) => (
+          {galleryImages.map((item: any, index: number) => (
             <figure class="gallery-item">
               <button 
                 class="block group w-full border-0 bg-transparent p-0 cursor-pointer" 
                 onclick={`openLightbox(${index})`}
                 aria-label={`View larger image: ${item.alt}`}
               >
-                <img src={item.src} alt={item.alt} class="gallery-img" loading="lazy" decoding="async" />
+                <Image src={item.asset} alt={item.alt} widths={[400, 800, 1200]} sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" class="gallery-img" loading="lazy" decoding="async" />
                 {item.caption && <figcaption class="caption">{item.caption}</figcaption>}
               </button>
             </figure>
@@ -156,7 +173,7 @@ const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https:
   </div>
 
   <!-- Lightbox Overlay -->
-  {project.data.gallery && project.data.gallery.length > 0 && (
+  {galleryImages.length > 0 && (
     <div id="lightbox" class="lightbox-overlay">
       <div class="lightbox-container">
         <button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">
@@ -187,7 +204,7 @@ const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https:
   )}
 </Layout>
 
-<script define:vars={{ gallery: project.data.gallery || [] }}>
+<script define:vars={{ gallery: lightboxItems }}>
   let currentImageIndex = 0;
   const totalImages = gallery.length;
   
