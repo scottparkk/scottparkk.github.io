@@ -6,17 +6,17 @@ summary: "Tarot Card designs inspired by UCLA"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "uclastudentaffairs", "digital", "procreate", "wallpaperwednesday"]
-cover: "/images/projects/creative/ucla-tarot-cards/tarot.png"
+cover: "/images/projects/creative/ucla-tarot-cards/tarot.webp"
 coverAlt: "UCLA Tarot Cards cover image"
 
 draft: false
 order: 1180
 gallery:
-  - src: "/images/projects/creative/ucla-tarot-cards/tarot.png"
+  - src: "/images/projects/creative/ucla-tarot-cards/tarot.webp"
     alt: "UCLA Tarot Cards - tarot"
-  - src: "/images/projects/creative/ucla-tarot-cards/tarot2.png"
+  - src: "/images/projects/creative/ucla-tarot-cards/tarot2.webp"
     alt: "UCLA Tarot Cards - tarot2"
-  - src: "/images/projects/creative/ucla-tarot-cards/tarot3.png"
+  - src: "/images/projects/creative/ucla-tarot-cards/tarot3.webp"
     alt: "UCLA Tarot Cards - tarot3"
 ---
 ## Overview

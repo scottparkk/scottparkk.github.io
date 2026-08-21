@@ -6,20 +6,20 @@ summary: "Gamified productivity app combining Tamagotchi-style virtual pets with
 stack: ["ReactNative", "Electron", "MongoDB", "NodeJS"]
 role: "Frontend Developer & UI/UX Designer"
 tags: ["mobile-development", "htmlcss", "reactnative", "javascript"]
-cover: "/images/projects/technical/Todogotchi/cover.png"
+cover: "/images/projects/technical/Todogotchi/cover.webp"
 coverAlt: "Todogotchi app interface with virtual pet"
 gallery:
-  - src: "/images/projects/technical/Todogotchi/Todogotchi1.png"
+  - src: "/images/projects/technical/Todogotchi/Todogotchi1.webp"
     alt: "Todogotchi main screen with pet"
-  - src: "/images/projects/technical/Todogotchi/Todogotchi2.png"
+  - src: "/images/projects/technical/Todogotchi/Todogotchi2.webp"
     alt: "Choose your pet screen with three eggs to select from and a name input"
-  - src: "/images/projects/technical/Todogotchi/Todogotchi4.png"
+  - src: "/images/projects/technical/Todogotchi/Todogotchi4.webp"
     alt: "Todogotchi achievements system"
-  - src: "/images/projects/technical/Todogotchi/Todogotchi5.png"
+  - src: "/images/projects/technical/Todogotchi/Todogotchi5.webp"
     alt: "Todogotchi settings and customization"
-  - src: "/images/projects/technical/Todogotchi/Todogotchi6.png"
+  - src: "/images/projects/technical/Todogotchi/Todogotchi6.webp"
     alt: "Todogotchi progress tracking"
-  - src: "/images/projects/technical/Todogotchi/Todogotchi7.png"
+  - src: "/images/projects/technical/Todogotchi/Todogotchi7.webp"
     alt: "Todogotchi social features"
 draft: false
 order: 50

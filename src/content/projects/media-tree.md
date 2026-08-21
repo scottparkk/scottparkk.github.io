@@ -6,18 +6,18 @@ summary: "Interactive media organization platform with hierarchical tree structu
 stack: ["React", "Node.js", "Flask"]
 role: "Full Stack Developer"
 tags: ["react", "nodejs", "flask", "web-development", "python", "javascript"]
-cover: "/images/projects/technical/MediaTree/media4.png"
+cover: "/images/projects/technical/MediaTree/media4.webp"
 coverAlt: "Media Tree application interface"
 gallery:
-  - src: "/images/projects/technical/MediaTree/media2.png"
+  - src: "/images/projects/technical/MediaTree/media2.webp"
     alt: "Media Tree main dashboard"
-  - src: "/images/projects/technical/MediaTree/media3.png"
+  - src: "/images/projects/technical/MediaTree/media3.webp"
     alt: "Media Tree file organization view"
-  - src: "/images/projects/technical/MediaTree/media4.png"
+  - src: "/images/projects/technical/MediaTree/media4.webp"
     alt: "Media Tree hierarchical structure"
-  - src: "/images/projects/technical/MediaTree/media5.png"
+  - src: "/images/projects/technical/MediaTree/media5.webp"
     alt: "Media Tree content management"
-  - src: "/images/projects/technical/MediaTree/media1.png"
+  - src: "/images/projects/technical/MediaTree/media1.webp"
     alt: "Media Tree additional view"
 draft: false
 order: 50

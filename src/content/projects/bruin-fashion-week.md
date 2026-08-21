@@ -12,11 +12,11 @@ coverAlt: "Bruin Fashion Week cover image"
 draft: false
 order: 1030
 gallery:
-  - src: "/images/projects/creative/bruin-fashion-week/bfw_1.png"
+  - src: "/images/projects/creative/bruin-fashion-week/bfw_1.webp"
     alt: "Bruin Fashion Week - bfw 1"
   - src: "/images/projects/creative/bruin-fashion-week/bfw_1a.jpg"
     alt: "Bruin Fashion Week - bfw 1a"
-  - src: "/images/projects/creative/bruin-fashion-week/bfw_4.png"
+  - src: "/images/projects/creative/bruin-fashion-week/bfw_4.webp"
     alt: "Bruin Fashion Week - bfw 4"
   - src: "/images/projects/creative/bruin-fashion-week/bfw_4a.jpg"
     alt: "Bruin Fashion Week - bfw 4a"

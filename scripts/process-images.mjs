@@ -54,12 +54,15 @@ async function walk(dir, acc = []) {
   return acc;
 }
 
-/** Rewrite `/images/...` references in content files whose extension changed. */
+/**
+ * Rewrite `/images/...` references whose extension changed.
+ * Must cover all of src/, not just content collections — pages and components
+ * (e.g. about.astro's photo grid) hardcode image paths too.
+ */
 async function rewriteReferences(renames) {
   if (!renames.size) return 0;
-  const contentDir = path.join(projectRoot, 'src/content');
   const files = [];
-  await walk2(contentDir, files);
+  await walk2(path.join(projectRoot, 'src'), files);
   let touched = 0;
   for (const file of files) {
     const original = await readFile(file, 'utf8');

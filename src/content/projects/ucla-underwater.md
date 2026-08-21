@@ -14,7 +14,7 @@ order: 1190
 gallery:
   - src: "/images/projects/creative/ucla-underwater/sharks.jpg"
     alt: "UCLA Underwater - sharks"
-  - src: "/images/projects/creative/ucla-underwater/sharks2.png"
+  - src: "/images/projects/creative/ucla-underwater/sharks2.webp"
     alt: "UCLA Underwater - sharks2"
 ---
 ## Overview

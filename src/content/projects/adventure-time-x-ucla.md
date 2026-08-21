@@ -6,12 +6,12 @@ summary: "Adventure Time characters immersed into UCLA environment."
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "ucla student affairs", "procreate", "digital"]
-cover: "/images/projects/creative/adventure-time-x-ucla/cover.png"
+cover: "/images/projects/creative/adventure-time-x-ucla/cover.webp"
 coverAlt: "Adventure Time x UCLA cover image"
 draft: false
 order: 1010
 gallery:
-  - src: "/images/projects/creative/adventure-time-x-ucla/adventuretime.png"
+  - src: "/images/projects/creative/adventure-time-x-ucla/adventuretime.webp"
     alt: "Adventure Time x UCLA - adventuretime"
 ---
 ## Overview

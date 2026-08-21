@@ -6,15 +6,15 @@ summary: "Wallpaper created for UCLA Student Affairs"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "uclastudentaffairs", "wallpaperwednesday", "procreate", "digital"]
-cover: "/images/projects/creative/halloween-at-ucla/cover.jpeg"
+cover: "/images/projects/creative/halloween-at-ucla/cover.jpg"
 coverAlt: "Halloween at UCLA cover image"
 
 draft: false
 order: 1040
 gallery:
-  - src: "/images/projects/creative/halloween-at-ucla/bearbus.jpeg"
+  - src: "/images/projects/creative/halloween-at-ucla/bearbus.jpg"
     alt: "Halloween at UCLA - bearbus"
-  - src: "/images/projects/creative/halloween-at-ucla/bearbus2.jpeg"
+  - src: "/images/projects/creative/halloween-at-ucla/bearbus2.jpg"
     alt: "Halloween at UCLA - bearbus2"
 ---
 ## Overview

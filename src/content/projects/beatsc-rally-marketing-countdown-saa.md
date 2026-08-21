@@ -6,21 +6,21 @@ summary: "Countdown graphics for Student Alumni Association's Beat USC Rally"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "marketing", "adobephotoshop" , "adobeillustrator", "blender", "procreate", "digital", "SAA"]
-cover: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc.png"
+cover: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc.webp"
 coverAlt: "BeatSC Rally Marketing Countdown (SAA) cover image"
 
 draft: false
 order: 1020
 gallery:
-  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc.png"
+  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc.webp"
     alt: "BeatSC Rally Marketing Countdown (SAA) - beatsc"
-  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc2.png"
+  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc2.webp"
     alt: "BeatSC Rally Marketing Countdown (SAA) - beatsc2"
-  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc3.png"
+  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc3.webp"
     alt: "BeatSC Rally Marketing Countdown (SAA) - beatsc3"
-  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc4.png"
+  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc4.webp"
     alt: "BeatSC Rally Marketing Countdown (SAA) - beatsc4"
-  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc5.png"
+  - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc5.webp"
     alt: "BeatSC Rally Marketing Countdown (SAA) - beatsc5"
 ---
 ## Overview

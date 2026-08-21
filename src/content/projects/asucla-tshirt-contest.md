@@ -6,7 +6,7 @@ summary: "Winning Design for ASUCLA's 12th Annual TShirt Design Contest"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "procreate"]
-cover: "/images/projects/creative/asucla-tshirt-contest/cover.png"
+cover: "/images/projects/creative/asucla-tshirt-contest/cover.webp"
 coverAlt: "ASUCLA TShirt Contest cover image"
 
 draft: false
@@ -14,9 +14,9 @@ order: 5
 links:
   PressRelease: "https://www.asucla.ucla.edu/pressreleases/student-winning-design-floats-to-top-of-12th-annual-asucla-t-shirt-design-contest"
 gallery:
-  - src: "/images/projects/creative/asucla-tshirt-contest/tshirt.png"
+  - src: "/images/projects/creative/asucla-tshirt-contest/tshirt.webp"
     alt: "ASUCLA TShirt Contest - tshirt"
-  - src: "/images/projects/creative/asucla-tshirt-contest/tshirt2.png"
+  - src: "/images/projects/creative/asucla-tshirt-contest/tshirt2.webp"
     alt: "ASUCLA TShirt Contest - tshirt2"
 ---
 ## Overview

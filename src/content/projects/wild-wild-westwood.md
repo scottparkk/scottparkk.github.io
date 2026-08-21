@@ -6,15 +6,15 @@ summary: "Western UCLA inspired wallpaper illustration."
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "uclastudentaffairs", "digital", "procreate", "wallpaperwednesday"]
-cover: "/images/projects/creative/wild-wild-westwood/cover.png"
+cover: "/images/projects/creative/wild-wild-westwood/cover.webp"
 coverAlt: "Wild Wild Westwood cover image"
 
 draft: false
 order: 1210
 gallery:
-  - src: "/images/projects/creative/wild-wild-westwood/www.png"
+  - src: "/images/projects/creative/wild-wild-westwood/www.webp"
     alt: "Wild Wild Westwood - www"
-  - src: "/images/projects/creative/wild-wild-westwood/www2.png"
+  - src: "/images/projects/creative/wild-wild-westwood/www2.webp"
     alt: "Wild Wild Westwood - www2"
 ---
 ## Overview

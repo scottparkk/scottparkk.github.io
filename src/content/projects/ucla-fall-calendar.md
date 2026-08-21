@@ -6,12 +6,12 @@ summary: "Illustrated Calendar Design for Fall 2024 UCLA Calendar"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "uclastudentaffairs", "procreate", "digital"]
-cover: "/images/projects/creative/ucla-fall-calendar/cover.png"
+cover: "/images/projects/creative/ucla-fall-calendar/cover.webp"
 coverAlt: "UCLA Fall Calendar cover image"
 gallery:
-  - src: "/images/projects/creative/ucla-fall-calendar/fallcalender.png"
+  - src: "/images/projects/creative/ucla-fall-calendar/fallcalender.webp"
     alt: "UCLA Fall Calendar fallcalender"
-  - src: "/images/projects/creative/ucla-fall-calendar/fallcalendar2.png"
+  - src: "/images/projects/creative/ucla-fall-calendar/fallcalendar2.webp"
     alt: "UCLA Fall Calendar fallcalendar2"
 draft: false
 order: 1170

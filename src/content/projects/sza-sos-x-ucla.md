@@ -6,15 +6,15 @@ summary: "Bruinbear as SZA SOS Wallpaper"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "uclastudentaffairs", "procreate", "wallpaperwednesday"]
-cover: "/images/projects/creative/sza-sos-x-ucla/cover.png"
+cover: "/images/projects/creative/sza-sos-x-ucla/cover.webp"
 coverAlt: "SZA SOS x UCLA cover image"
 
 draft: false
 order: 1100
 gallery:
-  - src: "/images/projects/creative/sza-sos-x-ucla/sos.png"
+  - src: "/images/projects/creative/sza-sos-x-ucla/sos.webp"
     alt: "SZA SOS x UCLA - sos"
-  - src: "/images/projects/creative/sza-sos-x-ucla/sos2.png"
+  - src: "/images/projects/creative/sza-sos-x-ucla/sos2.webp"
     alt: "SZA SOS x UCLA - sos2"
 ---
 ## Overview

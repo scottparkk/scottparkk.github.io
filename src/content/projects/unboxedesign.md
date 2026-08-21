@@ -6,10 +6,10 @@ summary: "Headless WordPress + Next.js website for a graphic design studio, with
 stack: ["NextJS", "TypeScript", "TailwindCSS", "WordPress", "Nodemailer", "Vercel"]
 role: "Freelance Web Developer"
 tags: ["web-development", "nextjs", "typescript", "react", "javascript"]
-cover: "/images/projects/technical/UnboxeDesign/Cover.png"
+cover: "/images/projects/technical/UnboxeDesign/Cover.webp"
 coverAlt: "unboxedesign studio website homepage"
 gallery:
-  - src: "/images/projects/technical/UnboxeDesign/site.png"
+  - src: "/images/projects/technical/UnboxeDesign/site.webp"
     alt: "unboxedesign website full view"
     caption: "Portfolio grid, services, and contact sections"
 links:
