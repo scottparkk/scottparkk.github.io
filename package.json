@@ -13,7 +13,8 @@
     "scaffold:projects": "node scripts/scaffold-projects.mjs",
     "publish:projects": "node scripts/publish-projects.mjs",
     "images:plan": "node scripts/process-images.mjs --dry-run",
-    "images:process": "node scripts/process-images.mjs"
+    "images:process": "node scripts/process-images.mjs",
+    "studio": "node tools/studio/server.mjs"
   },
   "dependencies": {
     "astro": "^5.10.1"

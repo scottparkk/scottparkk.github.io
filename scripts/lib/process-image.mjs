@@ -102,6 +102,7 @@ export async function processImage(input, opts = {}) {
       input, output, before, after: before, saved: 0,
       format: target.format, animated, frames: probe.pages ?? 1,
       width: probe.width, height: probe.height,
+      outWidth: probe.width, outHeight: probe.height,
       resized: false, replacedExtension: false,
       skipped: true, reason: 'already a master (correct format, within size caps)',
     };
@@ -129,7 +130,7 @@ export async function processImage(input, opts = {}) {
     });
   }
 
-  const buffer = await pipeline.toBuffer();
+  const { data: buffer, info } = await pipeline.toBuffer({ resolveWithObject: true });
 
   const result = {
     input,
@@ -142,6 +143,8 @@ export async function processImage(input, opts = {}) {
     frames: probe.pages ?? 1,
     width: probe.width,
     height: probe.height,
+    outWidth: info.width,
+    outHeight: info.height,
     resized: willResize,
     replacedExtension: output !== input,
     skipped: false,

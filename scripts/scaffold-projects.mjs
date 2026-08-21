@@ -17,6 +17,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { processImage } from './lib/process-image.mjs';
+import { serializeFrontmatter } from './lib/project-file.mjs';
 
 const args = process.argv.slice(2);
 if (args.length === 0) {
@@ -116,25 +117,8 @@ async function scaffoldFolder(folderPath) {
     order: undefined,
   };
 
-  // Serialize frontmatter (omit undefined keys)
-  const fmLines = Object.entries(frontmatter)
-    .filter(([, v]) => v !== undefined)
-    .map(([k, v]) => {
-      if (Array.isArray(v)) {
-        if (v.length === 0) return `${k}: []`;
-        if (k === 'gallery') {
-          return `${k}:\n${v.map(item => `  - src: "${item.src}"\n    alt: "${item.alt}"`).join('\n')}`;
-        }
-        return `${k}: [${v.map(x => JSON.stringify(x)).join(', ')}]`;
-      }
-      if (typeof v === 'string') return `${k}: ${JSON.stringify(v)}`;
-      if (typeof v === 'number') return `${k}: ${v}`;
-      if (typeof v === 'boolean') return `${k}: ${v}`;
-      return `${k}: ${JSON.stringify(v)}`;
-    })
-    .join('\n');
-
-  const body = `---\n${fmLines}\n---\n\n## Overview\n\nAdd detailed content here. Replace placeholders above.\n`;
+  // One definition of valid frontmatter, shared with tools/studio.
+  const body = `---\n${serializeFrontmatter(frontmatter)}\n---\n\n## Overview\n\nAdd detailed content here. Replace placeholders above.\n`;
   await ensureDir(PROJECTS_MD_DIR);
   await fs.writeFile(outFile, body, 'utf8');
   console.log(`Created ${outFile}`);

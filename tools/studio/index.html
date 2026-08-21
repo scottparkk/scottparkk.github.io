@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Studio</title>
+<style>
+  :root {
+    --ground:#F4F5F3; --surface:#fff; --surface-2:#EAEDE9;
+    --ink:#171B19; --ink-2:#4A534F; --muted:#77807B;
+    --rule:#D5DBD6; --accent:#0E6F66; --accent-ink:#fff;
+    --danger:#9C2B16; --ok:#2F6B4F;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:#101413; --surface:#181D1B; --surface-2:#212825;
+      --ink:#E7ECE9; --ink-2:#B4BEB9; --muted:#8A948F;
+      --rule:#2C3531; --accent:#5FD4C4; --accent-ink:#0B1211;
+      --danger:#E08363; --ok:#7FCBA4;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:56rem;margin:0 auto;padding:2rem 1.25rem 5rem;display:flex;flex-direction:column;gap:1.5rem}
+  header{display:flex;flex-direction:column;gap:.25rem}
+  h1{font-size:1.4rem;margin:0;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:.88rem}
+  fieldset{border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:1.1rem 1.2rem;margin:0}
+  legend{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);padding:0 .4rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:.9rem}
+  label{display:flex;flex-direction:column;gap:.28rem;font-size:.82rem;color:var(--ink-2)}
+  input,textarea,select{font:inherit;font-size:.9rem;padding:.45rem .55rem;border:1px solid var(--rule);
+    border-radius:4px;background:var(--ground);color:var(--ink);width:100%}
+  textarea{resize:vertical;min-height:3.4rem}
+  input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{
+    outline:2px solid var(--accent);outline-offset:1px}
+  .hint{font-size:.72rem;color:var(--muted)}
+  .count{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+  .count.over{color:var(--danger)}
+
+  #drop{border:1.5px dashed var(--rule);border-radius:6px;padding:1.6rem;text-align:center;
+    color:var(--muted);cursor:pointer;background:var(--ground);font-size:.88rem}
+  #drop.hot{border-color:var(--accent);color:var(--accent);background:var(--surface-2)}
+
+  .shots{display:flex;flex-direction:column;gap:.6rem;margin-top:.9rem}
+  .shot{display:grid;grid-template-columns:74px 1fr auto;gap:.75rem;align-items:start;
+    border:1px solid var(--rule);border-radius:5px;padding:.6rem;background:var(--ground)}
+  .shot img{width:74px;height:74px;object-fit:cover;border-radius:3px;background:var(--surface-2)}
+  .shot .fields{display:flex;flex-direction:column;gap:.35rem;min-width:0}
+  .shot .name{font-family:var(--mono);font-size:.72rem;color:var(--muted);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .shot .saved{color:var(--ok)}
+  .shot .side{display:flex;flex-direction:column;gap:.4rem;align-items:flex-end;font-size:.75rem}
+  .cover-pick{display:flex;align-items:center;gap:.3rem;color:var(--ink-2);white-space:nowrap}
+  .linkish{background:none;border:none;color:var(--danger);cursor:pointer;font-size:.75rem;padding:0}
+
+  .actions{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap}
+  button.primary{background:var(--accent);color:var(--accent-ink);border:none;border-radius:5px;
+    padding:.55rem 1.1rem;font-weight:600;font-size:.9rem;cursor:pointer}
+  button.primary[disabled]{opacity:.5;cursor:not-allowed}
+  button.ghost{background:none;border:1px solid var(--rule);color:var(--ink-2);border-radius:5px;
+    padding:.5rem .9rem;font-size:.85rem;cursor:pointer}
+  #status{font-size:.85rem;min-height:1.2rem}
+  #status.err{color:var(--danger)}
+  #status.ok{color:var(--ok)}
+  pre{background:var(--surface-2);border:1px solid var(--rule);border-radius:5px;padding:.8rem;
+    font-family:var(--mono);font-size:.76rem;overflow-x:auto;margin:0}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end}
+  .row > *{flex:1;min-width:9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Portfolio Studio</h1>
+    <div class="sub">Adds a project. Images are compressed on upload; the markdown is written when you save.
+      Nothing is committed — review with <code>git diff</code>.</div>
+  </header>
+
+  <fieldset>
+    <legend>Project</legend>
+    <div class="grid">
+      <label>Title
+        <input id="title" placeholder="UCLA Tarot Cards" autocomplete="off">
+        <span class="hint">Slug: <span id="slugPreview" class="count">—</span></span>
+      </label>
+      <label>Type
+        <select id="type"><option value="creative">creative</option><option value="technical">technical</option></select>
+      </label>
+      <label>Year <input id="year" type="number" inputmode="numeric"></label>
+      <label>Role <input id="role" placeholder="Designer" autocomplete="off"></label>
+    </div>
+    <div style="margin-top:.9rem">
+      <label>Summary
+        <textarea id="summary" maxlength="180" placeholder="One line describing the project."></textarea>
+        <span class="count"><span id="summaryCount">0</span>/180</span>
+      </label>
+    </div>
+    <div class="grid" style="margin-top:.9rem">
+      <label>Stack <span class="hint">comma separated</span>
+        <input id="stack" placeholder="Procreate, Illustrator" autocomplete="off">
+      </label>
+      <label>Tags <span class="hint">comma separated</span>
+        <input id="tags" list="tagList" placeholder="ucla, artwork" autocomplete="off">
+        <datalist id="tagList"></datalist>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Images</legend>
+    <div id="drop">Drop images here, or click to choose. The first one becomes the cover.</div>
+    <input id="picker" type="file" accept="image/*" multiple hidden>
+    <div id="shots" class="shots"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Optional</legend>
+    <div class="row">
+      <label>Repo URL <input id="repo" type="url" placeholder="https://github.com/..."></label>
+      <label>Live URL <input id="live" type="url" placeholder="https://..."></label>
+      <label>Case study URL <input id="caseStudy" type="url"></label>
+    </div>
+    <div class="row" style="margin-top:.9rem">
+      <label>Order <span class="hint">lower sorts earlier</span><input id="order" type="number" inputmode="numeric"></label>
+      <label style="flex-direction:row;align-items:center;gap:.4rem;flex:0 0 auto">
+        <input id="draft" type="checkbox" checked style="width:auto"> Draft
+      </label>
+    </div>
+    <div style="margin-top:.9rem">
+      <label>Body <span class="hint">markdown, below the frontmatter</span>
+        <textarea id="content" placeholder="## Overview&#10;&#10;..."></textarea>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="actions">
+    <button id="save" class="primary" disabled>Save project</button>
+    <button id="discard" class="ghost" type="button">Discard uploads</button>
+    <span id="status"></span>
+  </div>
+
+  <pre id="result" hidden></pre>
+</div>
+<script type="module" src="/app.js"></script>
+</body>
+</html>
