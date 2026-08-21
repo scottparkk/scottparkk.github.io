@@ -17,8 +17,21 @@ import { stat } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 
-/** Long-edge cap. Comfortable for large desktop displays; not print resolution. */
+/**
+ * Width cap. Comfortable for large desktop displays; not print resolution.
+ *
+ * Width, not "long edge" — capping the long edge squashes tall images. A
+ * 2198x19327 full-page screenshot capped at 2560 on its long edge comes out
+ * 291px wide and completely illegible.
+ */
 export const DEFAULT_MAX_EDGE = 2560;
+
+/**
+ * Height ceiling, set just below WebP's hard 16383px limit. Only extremely
+ * tall images (full-page screenshots) ever reach it; encoding fails outright
+ * above the format limit rather than degrading, so this must stay under it.
+ */
+export const MAX_HEIGHT = 16000;
 export const DEFAULT_QUALITY = 82;
 /** Animation is far more expensive per byte, so it gets its own (lower) quality. */
 export const DEFAULT_ANIMATED_QUALITY = 75;
@@ -46,7 +59,7 @@ export function targetFormatFor(file, { animated = false } = {}) {
  *
  * @param {string} input                Absolute or cwd-relative path to the source.
  * @param {object} [opts]
- * @param {number} [opts.maxEdge]       Long-edge cap in pixels.
+ * @param {number} [opts.maxEdge]       Width cap in pixels.
  * @param {number} [opts.quality]       Encoder quality for still images.
  * @param {boolean} [opts.dryRun]       Compute the result without writing anything.
  * @param {boolean} [opts.keepOriginal] Leave the source file in place after writing.
@@ -69,7 +82,6 @@ export async function processImage(input, opts = {}) {
   const before = (await stat(input)).size;
   const probe = await sharp(input).metadata();
   const animated = (probe.pages ?? 1) > 1;
-  const longEdge = Math.max(probe.width ?? 0, probe.height ?? 0);
 
   const target = targetFormatFor(input, { animated });
   const output = path.join(
@@ -80,11 +92,11 @@ export async function processImage(input, opts = {}) {
   // Read animated sources as animations or sharp silently keeps only frame one.
   let pipeline = sharp(input, { animated });
 
-  const willResize = longEdge > maxEdge;
+  const willResize = (probe.width ?? 0) > maxEdge || (probe.height ?? 0) > MAX_HEIGHT;
   if (willResize) {
     pipeline = pipeline.resize({
       width: maxEdge,
-      height: maxEdge,
+      height: MAX_HEIGHT,
       fit: 'inside',
       withoutEnlargement: true,
     });
