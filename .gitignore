@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# claude code session logs (keep out of this public repo)
+CC-Session-Logs/
+
+# claude code project config and instructions (local only)
+.claude/
+CLAUDE.md

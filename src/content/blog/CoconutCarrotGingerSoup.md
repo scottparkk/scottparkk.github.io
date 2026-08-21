@@ -4,7 +4,6 @@ date: 2025-01-15
 summary: "My recipe for a bright & flavorful coconut carrot ginger soup."
 tags: ["recipe", "vegan"]
 draft: false
-hero: "/images/blog/hello-world-hero.jpg"
 ---
 ## Ingredients
 - **Ingredients** 	

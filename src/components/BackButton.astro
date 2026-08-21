@@ -2,9 +2,11 @@
 interface Props {
   href?: string;
   label?: string;
+  /** Where to land when there's no in-site page to go back to (direct visit, shared link). */
+  fallback?: string;
 }
 
-const { href, label = 'BACK' } = Astro.props;
+const { href, label = 'BACK', fallback = '/' } = Astro.props;
 
 // Use browser's back functionality if no specific href is provided
 const isHistoryBack = !href;
@@ -12,7 +14,7 @@ const isHistoryBack = !href;
 
 <div class="back-button-container">
   {isHistoryBack ? (
-    <button id="back-button" class="back-button" aria-label={label}>
+    <button id="back-button" class="back-button" aria-label={label} data-fallback={fallback}>
       <span class="back-arrow">◀</span>
       <span class="back-text">{label}</span>
     </button>
@@ -30,19 +32,23 @@ const isHistoryBack = !href;
     const backButton = document.getElementById('back-button');
     if (backButton) {
       backButton.addEventListener('click', () => {
-        // Check if there's history to go back to
-        if (window.history.length > 1) {
+        const fallback = backButton.dataset.fallback || '/';
+
+        // Only step back through history if the previous page was on this site.
+        // history.length > 1 alone isn't enough — arriving from Google or a shared
+        // link also grows history, and going "back" would leave the site entirely.
+        let cameFromThisSite = false;
+        try {
+          cameFromThisSite = Boolean(document.referrer)
+            && new URL(document.referrer).origin === window.location.origin;
+        } catch {
+          cameFromThisSite = false;
+        }
+
+        if (cameFromThisSite && window.history.length > 1) {
           window.history.back();
         } else {
-          // Fallback to projects or blog page based on current URL
-          const path = window.location.pathname;
-          if (path.includes('/projects/')) {
-            window.location.href = '/projects';
-          } else if (path.includes('/blog/')) {
-            window.location.href = '/blog';
-          } else {
-            window.location.href = '/';
-          }
+          window.location.href = fallback;
         }
       });
     }

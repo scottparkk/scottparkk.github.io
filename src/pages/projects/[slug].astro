@@ -19,6 +19,10 @@ export async function getStaticPaths() {
 interface PageProps { project: any; slug: string; Content: any }
 const { project, slug: effectiveSlug, Content } = Astro.props as PageProps;
 
+// Listing page this project belongs to — used as the back-button fallback and footer link.
+const listingHref = `/projects/${project.data.type}`;
+const listingLabel = project.data.type === 'creative' ? 'Creative Work' : 'Technical Work';
+
 // canonical URL
 const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https://scottparkk.github.io');
 ---
@@ -38,7 +42,7 @@ const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https:
   <Nav slot="header" />
   
   <div class="container mx-auto px-6 py-8 max-w-4xl">
-    <BackButton />
+    <BackButton fallback={listingHref} />
     
     <article>
     <!-- Project Header -->
@@ -140,13 +144,13 @@ const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https:
       </section>
     )}
     
-    <!-- Back to Projects -->
+    <!-- Back to the project's listing page -->
     <footer class="mt-16 pt-8 border-t border-neutral-200">
       <a 
-        href="/projects" 
+        href={listingHref} 
         class="inline-flex items-center text-neutral-600 hover:text-neutral-900 transition-colors"
       >
-        ← Back to Projects
+        ← Back to {listingLabel}
       </a>
     </footer>
   </article>

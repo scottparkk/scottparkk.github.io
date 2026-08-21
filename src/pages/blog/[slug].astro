@@ -48,7 +48,7 @@ const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
   <Nav slot="header" />
   
   <div class="container mx-auto px-6 py-8 max-w-4xl">
-    <BackButton />
+    <BackButton fallback="/blog" />
     
     <article>
     <!-- Post Header -->
