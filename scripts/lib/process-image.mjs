@@ -63,6 +63,7 @@ export function targetFormatFor(file, { animated = false } = {}) {
  * @param {number} [opts.quality]       Encoder quality for still images.
  * @param {boolean} [opts.dryRun]       Compute the result without writing anything.
  * @param {boolean} [opts.keepOriginal] Leave the source file in place after writing.
+ * @param {boolean} [opts.force]        Re-encode even if the file is already a master.
  * @returns {Promise<object>} Result describing what happened (or would happen).
  */
 export async function processImage(input, opts = {}) {
@@ -72,6 +73,7 @@ export async function processImage(input, opts = {}) {
     animatedQuality = DEFAULT_ANIMATED_QUALITY,
     dryRun = false,
     keepOriginal = false,
+    force = false,
   } = opts;
 
   const ext = path.extname(input).toLowerCase();
@@ -89,10 +91,26 @@ export async function processImage(input, opts = {}) {
     path.basename(input, path.extname(input)) + target.ext,
   );
 
+  const needsResize = (probe.width ?? 0) > maxEdge || (probe.height ?? 0) > MAX_HEIGHT;
+
+  // Already a master: right format, within the size caps. Re-encoding it would
+  // compound lossy compression for a few kB — silent quality decay every time
+  // the batch runs. Pass force:true to override (e.g. re-encoding at a higher
+  // quality, which must start from the untouched original, not from this file).
+  if (!force && ext === target.ext && !needsResize) {
+    return {
+      input, output, before, after: before, saved: 0,
+      format: target.format, animated, frames: probe.pages ?? 1,
+      width: probe.width, height: probe.height,
+      resized: false, replacedExtension: false,
+      skipped: true, reason: 'already a master (correct format, within size caps)',
+    };
+  }
+
   // Read animated sources as animations or sharp silently keeps only frame one.
   let pipeline = sharp(input, { animated });
 
-  const willResize = (probe.width ?? 0) > maxEdge || (probe.height ?? 0) > MAX_HEIGHT;
+  const willResize = needsResize;
   if (willResize) {
     pipeline = pipeline.resize({
       width: maxEdge,
