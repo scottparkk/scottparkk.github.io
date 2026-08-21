@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Script: check-missing-images.mjs
- * Scans project content entries for declared cover/gallery image paths and verifies files exist under /public.
+ * Scans project content entries for declared cover/gallery image paths and verifies files exist under src/assets.
  * Helps catch 404s like /images/projects/climate-dashboard-cover.jpg at dev time.
  */
 import { readdir, access, readFile } from 'node:fs/promises';
@@ -11,7 +11,7 @@ import { join, dirname } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
-const publicDir = join(root, 'public');
+const assetsDir = join(root, 'src', 'assets');
 const contentDir = join(root, 'src', 'content', 'projects');
 
 
@@ -39,7 +39,7 @@ function extractFrontmatter(md) {
 }
 
 async function pathExists(relPath) {
-  const p = join(publicDir, relPath.replace(/^\//, ''));
+  const p = join(assetsDir, relPath.replace(/^\//, ''));
   try {
     await access(p, constants.R_OK);
     return true;
@@ -80,7 +80,7 @@ async function main() {
     }
   }
   if (missing.length) {
-    console.log('\nMissing image assets detected (declare & add to public/images/projects):');
+    console.log('\nMissing image assets detected (declare & add to src/assets/images/projects):');
     for (const m of missing) {
       console.log(`- ${m.file} -> ${m.field}: ${m.path}`);
     }

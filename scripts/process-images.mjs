@@ -6,9 +6,9 @@
  * rewrites any references to renamed files in the content collections.
  *
  * Usage:
- *   npm run images:plan                  # dry run over public/images, writes nothing
+ *   npm run images:plan                  # dry run over src/assets/images, writes nothing
  *   npm run images:process               # actually re-master
- *   node scripts/process-images.mjs public/images/projects/creative --dry-run
+ *   node scripts/process-images.mjs src/assets/images/projects/creative --dry-run
  *   node scripts/process-images.mjs --max-edge=2048 --quality=78
  */
 
@@ -40,7 +40,7 @@ const flag = (name, fallback) => {
 const maxEdge = flag('max-edge', DEFAULT_MAX_EDGE);
 const quality = flag('quality', DEFAULT_QUALITY);
 const targets = args.filter(a => !a.startsWith('--'));
-const roots = targets.length ? targets : ['public/images'];
+const roots = targets.length ? targets : ['src/assets/images'];
 
 const mb = bytes => (bytes / 1048576).toFixed(2);
 const pct = (before, after) => `${(100 - (after / before) * 100).toFixed(0)}%`;
@@ -114,10 +114,11 @@ for (const file of files) {
     totalAfter += r.after;
     results.push(r);
     if (r.replacedExtension) {
-      renames.set(
-        r.input.replace(path.join(projectRoot, 'public'), ''),
-        r.output.replace(path.join(projectRoot, 'public'), ''),
-      );
+      // Content references images as "/images/...", which maps to
+      // src/assets/images/... on disk. Strip that prefix to get the web path.
+      const toWebPath = (p) =>
+        p.replace(path.join(projectRoot, 'src', 'assets'), '');
+      renames.set(toWebPath(r.input), toWebPath(r.output));
     }
   } catch (err) {
     failed++;
@@ -127,7 +128,7 @@ for (const file of files) {
 
 results.sort((a, b) => b.saved - a.saved);
 for (const r of results.slice(0, 15)) {
-  const name = path.relative(path.join(projectRoot, 'public/images'), r.input);
+  const name = path.relative(path.join(projectRoot, 'src/assets/images'), r.input);
   log(
     `  ${mb(r.before).padStart(7)} MB -> ${mb(r.after).padStart(6)} MB  ${pct(r.before, r.after).padStart(4)}  ` +
     `${colors.dim}${r.width}x${r.height}${r.animated ? ` ${r.frames}f` : ''} ${r.format}${colors.reset}  ${name}`,

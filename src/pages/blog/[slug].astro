@@ -3,6 +3,7 @@ import Layout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import BackButton from '../../components/BackButton.astro';
 import { getCollection } from 'astro:content';
+import { absoluteImageUrl } from '../../lib/images';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -17,6 +18,12 @@ const { Content } = await post.render();
 
 // Generate canonical URL
 const canonicalURL = new URL(`/blog/${post.slug}`, Astro.site || 'https://scottparkk.github.io');
+
+// Hero is only used for og:image. Resolve it through the asset pipeline so the
+// URL points at a processed file rather than a path that no longer exists.
+const heroImage = post.data.hero
+  ? await absoluteImageUrl(post.data.hero, Astro.site, { width: 1200 })
+  : undefined;
 
 // Get all posts for prev/next navigation
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
@@ -37,9 +44,7 @@ const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
     {post.data.updated && (
       <meta property="article:modified_time" content={post.data.updated.toISOString()} />
     )}
-    {post.data.hero && (
-      <meta property="og:image" content={new URL(post.data.hero, Astro.site || 'https://scottparkk.github.io')} />
-    )}
+    {heroImage && <meta property="og:image" content={heroImage} />}
     {post.data.tags && post.data.tags.map(tag => (
       <meta property="article:tag" content={tag} />
     ))}

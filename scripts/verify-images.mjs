@@ -11,7 +11,7 @@ import os from 'node:os';
 import sharp from 'sharp';
 
 const ORIGINALS = path.join(os.homedir(), 'Desktop/portfolio-image-originals/images');
-const CURRENT = 'public/images';
+const CURRENT = 'src/assets/images';
 const OUT = process.argv[2] || '/tmp/qc';
 const DISPLAY_W = 1600;          // generous: a large desktop viewport
 const COMPOSITES = 14;           // worst-N to render side by side

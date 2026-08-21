@@ -16,6 +16,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { processImage } from './lib/process-image.mjs';
 
 const args = process.argv.slice(2);
 if (args.length === 0) {
@@ -29,6 +30,9 @@ const typeArg = args.find(a => a.startsWith('--type='));
 const explicitType = typeArg ? typeArg.split('=')[1] : undefined;
 
 const PROJECTS_MD_DIR = path.resolve('src/content/projects');
+// Images live in src/assets so Astro can generate responsive variants at build
+// time. Content still references them by the stable "/images/..." path.
+const ASSETS_DIR = path.resolve('src/assets/images/projects');
 
 async function ensureDir(p) { await fs.mkdir(p, { recursive: true }); }
 
@@ -74,14 +78,28 @@ async function scaffoldFolder(folderPath) {
     console.warn(`No images in ${folderName}, skipping.`);
     return;
   }
-  const coverFile = imageFiles[0];
-  const coverPath = `/images/projects/${slug}/${coverFile}`;
-
-  // Additional gallery images
-  const gallery = imageFiles.slice(1).map(name => ({ src: `/images/projects/${slug}/${name}`, alt: `${titleCase(slug)} – ${name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ')}` }));
-
   const year = new Date().getFullYear();
   const type = guessTypeFromName(folderName);
+
+  // Copy each source image into src/assets and re-master it on the way in, so
+  // a raw camera or print export never lands in the repo. Same code path the
+  // batch CLI uses, so output is identical however an image arrives.
+  const destDir = path.join(ASSETS_DIR, type, slug);
+  await ensureDir(destDir);
+  const placed = [];
+  for (const name of imageFiles) {
+    const staged = path.join(destDir, name);
+    await fs.copyFile(path.join(folderPath, name), staged);
+    const result = await processImage(staged);
+    placed.push(path.basename(result.skipped ? staged : result.output));
+  }
+
+  const coverFile = placed[0];
+  const webPath = (file) => `/images/projects/${type}/${slug}/${file}`;
+  const coverPath = webPath(coverFile);
+
+  // Additional gallery images
+  const gallery = placed.slice(1).map(name => ({ src: webPath(name), alt: `${titleCase(slug)} – ${name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ')}` }));
 
   const frontmatter = {
     title: titleCase(slug),
