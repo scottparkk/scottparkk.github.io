@@ -3,7 +3,6 @@ import Layout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import BackButton from '../../components/BackButton.astro';
 import { getCollection } from 'astro:content';
-import { buildImageSet } from '../../lib/image';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', ({ data }) => !data.draft);

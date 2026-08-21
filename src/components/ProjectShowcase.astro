@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { buildImageSet } from '../lib/image';
 interface Props { project: CollectionEntry<'projects'>; index?: number }
 const { project, index = 0 } = Astro.props as Props;
 const p = project.data;
@@ -34,17 +33,14 @@ const slug = project.id.replace(/^projects\//,'').replace(/\.(md|mdx)$/i,'');
   <!-- Image container with grey border -->
   <a href={`/projects/${slug}`} class="media-container" aria-label={p.title}>
     <div class="media" style={`--focus:${focus}`}>
-      {p.cover && (async () => {
-        const img = await buildImageSet({
-          src: p.cover!,
-          alt: p.coverAlt || p.title,
-          loading: index < 3 ? 'eager' : 'lazy',
-          sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-        });
-        return (
-          <img {...img} />
-        );
-      })()}
+      {p.cover && (
+        <img
+          src={p.cover}
+          alt={p.coverAlt || p.title}
+          loading={index < 3 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      )}
       
       <!-- Tags overlay on image -->
       <div class="tags-overlay">
