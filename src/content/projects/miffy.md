@@ -6,7 +6,7 @@ summary: "Choose your adventure videogame with Miffy."
 stack: ["tinyJS"]
 role: "Game Developer"
 tags: ["game-development", "tinyJS","javascript", "blender"]
-cover: "/images/projects/technical/Miffy/cover.png"
+cover: "/images/projects/technical/Miffy/Miffy1.png"
 coverAlt: "Miffy pet care app interface"
 gallery:
   - src: "/images/projects/technical/Miffy/Miffy1.png"

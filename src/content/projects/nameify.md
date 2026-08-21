@@ -6,7 +6,7 @@ summary: "Web application that generates an acrostic poem using your Spotify Dat
 stack: ["React", "Node.js"]
 role: "Full Stack Developer"
 tags: ["python", "react", "web-development", "nodeJS", "javascript"]
-cover: "/images/projects/technical/Nameify/cover.png"
+cover: "/images/projects/technical/Nameify/Nameify1.png"
 coverAlt: "Nameify "
 gallery:
   - src: "/images/projects/technical/Nameify/Nameify1.png"

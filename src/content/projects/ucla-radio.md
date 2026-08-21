@@ -6,7 +6,7 @@ summary: "Modern web platform for UCLA's radio station with live streaming and s
 stack: ["ReactNative", "Node.js", "WebRTC", "PostgreSQL", "Redis"]
 role: "Full Stack Developer"
 tags: ["reactnative", "nodejs", "uclaradio", "javascript", "htmlcss", "figma"]
-cover: "/images/projects/technical/UCLARadio/cover.png"
+cover: "/images/projects/technical/UCLARadio/Radio1.png"
 coverAlt: "UCLA Radio web platform interface"
 gallery:
   - src: "/images/projects/technical/UCLARadio/Radio1.png"

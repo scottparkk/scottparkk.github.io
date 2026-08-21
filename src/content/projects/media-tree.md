@@ -6,7 +6,7 @@ summary: "Interactive media organization platform with hierarchical tree structu
 stack: ["React", "Node.js", "Flask"]
 role: "Full Stack Developer"
 tags: ["react", "nodejs", "flask", "web-development", "python", "javascript"]
-cover: "/images/projects/technical/MediaTree/cover.png"
+cover: "/images/projects/technical/MediaTree/media4.png"
 coverAlt: "Media Tree application interface"
 gallery:
   - src: "/images/projects/technical/MediaTree/media2.png"

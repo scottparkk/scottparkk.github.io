@@ -6,7 +6,7 @@ summary: "Dating Simulator with UCLA-inspired personas"
 stack: ["Unity"]
 role: "Game Developer"
 tags: ["game-development", "C#"]
-cover: "/images/projects/technical/UCLove/cover.png"
+cover: "/images/projects/technical/UCLove/UCLove1.png"
 coverAlt: "UCLove"
 gallery:
   - src: "/images/projects/technical/UCLove/UCLove1.png"

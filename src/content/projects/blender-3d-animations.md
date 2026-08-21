@@ -6,7 +6,7 @@ summary: "Collection of 3D animations and models created using Blender"
 stack: ["Blender","ThreeJS"]
 role: "3D Artist & Developer"
 tags: ["blender", "3d-modeling", "threeJS", "uclaradio"]
-cover: "/images/projects/technical/Blender/cover.gif"
+cover: "/images/projects/technical/Blender/Blender1.gif"
 coverAlt: "Blender 3D animation showcase"
 gallery:
   - src: "/images/projects/technical/Blender/Blender1.gif"

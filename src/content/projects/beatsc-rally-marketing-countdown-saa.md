@@ -6,7 +6,7 @@ summary: "Countdown graphics for Student Alumni Association's Beat USC Rally"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "marketing", "adobephotoshop" , "adobeillustrator", "blender", "procreate", "digital", "SAA"]
-cover: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/cover.png"
+cover: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc.png"
 coverAlt: "BeatSC Rally Marketing Countdown (SAA) cover image"
 
 draft: false

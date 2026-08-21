@@ -6,7 +6,7 @@ summary: "Design to promote UCLA Study Spots"
 stack: ["Illustration"]
 role: "Designer"
 tags: ["ucla", "uclastudentaffairs", "adobeillustrator"]
-cover: "/images/projects/creative/study-spots-at-ucla/cover.png"
+cover: "/images/projects/creative/study-spots-at-ucla/study4.png"
 coverAlt: "Study Spots at UCLA cover image"
 
 draft: false
