@@ -19,7 +19,7 @@ gallery:
   - src: "/images/projects/creative/asucla-tshirt-contest/tshirt2.webp"
     alt: "ASUCLA TShirt Contest - tshirt2"
 ---
-## Overview
+
 Among 112 other candidates, my TShirt design was voted first place for the 2024 Design Contest. The TShirt is now sold at the UCLA Store for purchase.
 
 "The 12th annual ASUCLA T-shirt Design Contest goes to UCLA student Scott Park and his illustration of Bruin bears dancing amongst UCLA bubbles."

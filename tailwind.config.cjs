@@ -2,7 +2,7 @@ module.exports = {
   content: ['./src/**/*.{astro,html,js,ts,jsx,tsx}'],
   safelist: [
     // Component classes we generate in @layer components so they are never purged accidentally
-  'btn','btn-primary','btn-outline','btn-muted','card','badge','badge-creative','badge-technical','badge-writing','tag','stack-tag','meta','heading-gradient','heading-display','nav-link','nav-link-active'
+  'btn','btn-primary','btn-outline','btn-muted','card','chip','chip-solid','chip-outline','label','copy','lead','meta','heading-gradient','heading-display','nav-link','nav-link-active'
   ],
   theme: {
     extend: {

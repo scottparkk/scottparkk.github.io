@@ -17,6 +17,3 @@ gallery:
   - src: "/images/projects/creative/halloween-at-ucla/bearbus2.jpg"
     alt: "Halloween at UCLA - bearbus2"
 ---
-## Overview
-
-

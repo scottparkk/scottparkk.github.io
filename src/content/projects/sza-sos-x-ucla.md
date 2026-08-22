@@ -17,5 +17,3 @@ gallery:
   - src: "/images/projects/creative/sza-sos-x-ucla/sos2.webp"
     alt: "SZA SOS x UCLA - sos2"
 ---
-## Overview
-

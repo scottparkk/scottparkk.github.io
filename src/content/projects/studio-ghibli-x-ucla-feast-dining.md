@@ -26,8 +26,4 @@ draft: false
 order: 1150
 ---
 
-## Overview
-
 Initial description coming soon. This section will outline goals, process, and stylistic choices for the illustration series.
-
-

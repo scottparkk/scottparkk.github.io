@@ -17,5 +17,3 @@ gallery:
   - src: "/images/projects/creative/ucla-underwater/sharks2.webp"
     alt: "UCLA Underwater - sharks2"
 ---
-## Overview
-

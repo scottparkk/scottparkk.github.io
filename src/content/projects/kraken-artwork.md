@@ -14,6 +14,3 @@ gallery:
   - src: "/images/projects/creative/kraken-artwork/kraken.webp"
     alt: "Kraken Artwork - kraken"
 ---
-## Overview
-
-

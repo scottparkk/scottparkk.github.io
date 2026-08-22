@@ -19,6 +19,3 @@ gallery:
   - src: "/images/projects/creative/ramadan-at-ucla/3_ramadan.jpg"
     alt: "Ramadan at UCLA - 3 ramadan"
 ---
-## Overview
-
-

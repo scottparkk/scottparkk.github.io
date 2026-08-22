@@ -27,5 +27,3 @@ gallery:
   - src: "/images/projects/creative/study-spots-at-ucla/study7.webp"
     alt: "Study Spots at UCLA - study7"
 ---
-## Overview
-

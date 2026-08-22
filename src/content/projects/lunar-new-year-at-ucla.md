@@ -14,5 +14,3 @@ gallery:
   - src: "/images/projects/creative/lunar-new-year-at-ucla/lunar.webp"
     alt: "Lunar New Year at UCLA - lunar"
 ---
-## Overview
-

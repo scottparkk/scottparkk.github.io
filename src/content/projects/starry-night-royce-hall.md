@@ -19,6 +19,3 @@ gallery:
   - src: "/images/projects/creative/starry-night-royce-hall/stargaze3.webp"
     alt: "Starry Night Royce Hall - stargaze3"
 ---
-## Overview
-
-

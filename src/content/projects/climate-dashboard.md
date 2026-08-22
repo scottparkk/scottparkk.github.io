@@ -14,8 +14,6 @@ links:
 order: 100
 ---
 
-## Project Overview
-
 This interactive dashboard transforms complex climate datasets into compelling visual narratives. The project focuses on making environmental data accessible through thoughtful design and smooth interactions.
 
 ### Key Features

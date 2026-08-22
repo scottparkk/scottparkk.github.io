@@ -14,8 +14,6 @@ order: 200
 featured: true
 ---
 
-## Technical Overview
-
 A production-ready API gateway built to handle high-throughput microservices architecture. The system provides robust request routing, rate limiting, and observability features.
 
 ### Architecture

@@ -17,6 +17,3 @@ gallery:
   - src: "/images/projects/creative/merchandise-designs/merch2.webp"
     alt: "Merchandise Designs - merch2"
 ---
-## Overview
-
-

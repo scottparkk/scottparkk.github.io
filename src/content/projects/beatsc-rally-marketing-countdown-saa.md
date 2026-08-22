@@ -23,6 +23,5 @@ gallery:
   - src: "/images/projects/creative/beatsc-rally-marketing-countdown-saa/beatsc5.webp"
     alt: "BeatSC Rally Marketing Countdown (SAA) - beatsc5"
 ---
-## Overview
 
 Led marketing campaign for the Student Alumni Association's Beat'SC Rally in 2024. Designed countdown graphics to post on Instagram days prior to the event.

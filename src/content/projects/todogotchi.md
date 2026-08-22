@@ -25,10 +25,8 @@ draft: false
 order: 50
 ---
 
-## Overview
- Inspired by the popular ‘Tamogotchi’, Todogotchi is a MacOS app that gamifies a simple to-do list into a rewarding experience for users. Users of the application are tasked with taking care of a virtual pet– doing so requires a user to complete items on their to-do list.
+Inspired by the popular ‘Tamogotchi’, Todogotchi is a MacOS app that gamifies a simple to-do list into a rewarding experience for users. Users of the application are tasked with taking care of a virtual pet– doing so requires a user to complete items on their to-do list.
 I specifically led Frontend Development for this project and was the UI/UX designer as well.
-
 
 ## Image Guide
 1. Upon launching the app, the user is greeted with a login page.If the user has an account then they can login to access their stored information. Otherwise, a user can choose to register a new account.

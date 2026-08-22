@@ -33,6 +33,3 @@ gallery:
   - src: "/images/projects/creative/ucla-wooden-renovation-marketing/9_steps_campus.webp"
     alt: "UCLA Wooden Renovation Marketing - 9 steps campus"
 ---
-## Overview
-
-

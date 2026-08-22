@@ -25,6 +25,5 @@ gallery:
   - src: "/images/projects/creative/oscars-x-ucla-2025/6_oscars_stillhere.webp"
     alt: "Oscars x UCLA 2025 - 6 oscars stillhere"
 ---
-## Overview
 
 Proposed social media post to design a spinoff for the 2025 Oscar Best Picture nominations with UCLA references. Solely came up with ideas and copy for the graphics. Executed designs through various softwares.

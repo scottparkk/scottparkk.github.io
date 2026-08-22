@@ -17,6 +17,5 @@ gallery:
   - src: "/images/projects/creative/senior-night-out-marketing-saa/sno2.webp"
     alt: "Senior Night Out Marketing - sno2"
 ---
-## Overview
 
 Led marketing promotion for Student Alumni Association "Senior Night Out" events.

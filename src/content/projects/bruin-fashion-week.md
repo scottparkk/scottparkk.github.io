@@ -21,6 +21,5 @@ gallery:
   - src: "/images/projects/creative/bruin-fashion-week/bfw_4a.jpg"
     alt: "Bruin Fashion Week - bfw 4a"
 ---
-## Overview
 
-Proposed a new project while working as a graphic designer for UCLA Student Affairs for 'Bruin Fashion Week'. This project was posted during the famous 'New York Fashion Week' and took inspiration from fashion designers. 
+Proposed a new project while working as a graphic designer for UCLA Student Affairs for 'Bruin Fashion Week'. This project was posted during the famous 'New York Fashion Week' and took inspiration from fashion designers.

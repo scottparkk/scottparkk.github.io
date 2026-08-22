@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
-import BackButton from '../../components/BackButton.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import { resolveImage, absoluteImageUrl, imageUrl } from '../../lib/images';
@@ -19,440 +18,635 @@ export async function getStaticPaths() {
 
 interface PageProps { project: any; slug: string; Content: any }
 const { project, slug: effectiveSlug, Content } = Astro.props as PageProps;
+const data = project.data;
 
-// Listing page this project belongs to — used as the back-button fallback and footer link.
-const listingHref = `/projects/${project.data.type}`;
-const listingLabel = project.data.type === 'creative' ? 'Creative Work' : 'Technical Work';
+// Listing page this project belongs to — the one back link that remains.
+const listingHref = `/projects/${data.type}`;
+const listingLabel = data.type === 'creative' ? 'Creative Work' : 'Technical Work';
+// "Stack" is the wrong word for a poster made in Illustrator.
+const toolsLabel = data.type === 'creative' ? 'Tools' : 'Stack';
 
 // canonical URL
 const canonicalURL = new URL(`/projects/${effectiveSlug}`, Astro.site || 'https://scottparkk.github.io');
 
 // og:image needs an absolute URL to a processed asset, not a source path.
-const ogImage = project.data.cover
-  ? await absoluteImageUrl(project.data.cover, Astro.site, { width: 1200 })
+const ogImage = data.cover
+  ? await absoluteImageUrl(data.cover, Astro.site, { width: 1200 })
   : undefined;
 
-// The gallery renders as <Image> (build-time srcset) but the lightbox swaps
-// src from client JS, so it also needs plain URLs to a single large variant.
-const gallery: any[] = project.data.gallery || [];
-const galleryImages = await Promise.all(
-  gallery.map(async (item) => ({
-    ...item,
-    asset: resolveImage(item.src),
-    full: await imageUrl(item.src, { width: 2000 }),
-  })),
-);
-const lightboxItems = galleryImages.map(({ full, alt, caption }) => ({ src: full, alt, caption }));
+/*
+ * One image set drives both the stage and the rail. The gallery is the source
+ * of truth; a project with only a cover still gets a stage rather than a hole.
+ */
+const sources: any[] = data.gallery?.length
+  ? data.gallery
+  : (data.cover ? [{ src: data.cover, alt: data.coverAlt || data.title }] : []);
+
+const images = await Promise.all(sources.map(async (item: any) => {
+  const asset = resolveImage(item.src);
+  // Never claim a width the master can't supply — a duplicate URL under two
+  // descriptors would make the browser pick the "2000w" copy of a 900px file.
+  const variants = [...new Set([1200, 2000].map((w) => Math.min(w, asset.width)))].sort((a, b) => a - b);
+  const urls = await Promise.all(variants.map((w) => imageUrl(item.src, { width: w })));
+  return {
+    alt: item.alt,
+    caption: item.caption || '',
+    asset,
+    src: urls[urls.length - 1],
+    srcset: urls.map((u, i) => `${u} ${variants[i]}w`).join(', '),
+    width: asset.width,
+    height: asset.height,
+  };
+}));
+
+const hasMedia = images.length > 0;
+const first = images[0];
+
+// Markdown carries prose only; the "Overview" label comes from this template so
+// it can't drift file to file, and an empty body renders nothing at all.
+const hasBody = Boolean((project.body || '').trim());
+
+const stageSizes = '(max-width: 1023px) 92vw, 52vw';
 ---
 
-<Layout title={project.data.title}>
+<Layout title={data.title}>
   <Fragment slot="head">
     <link rel="canonical" href={canonicalURL} />
-    <meta property="og:title" content={`${project.data.title} — Scott Park`} />
-    <meta property="og:description" content={project.data.summary} />
+    <meta property="og:title" content={`${data.title} — Scott Park`} />
+    <meta property="og:description" content={data.summary} />
     <meta property="og:type" content="article" />
     <meta property="og:url" content={canonicalURL} />
     {ogImage && <meta property="og:image" content={ogImage} />}
   </Fragment>
-  
+
   <Nav slot="header" />
-  
-  <div class="container mx-auto px-6 py-8 max-w-4xl">
-    <BackButton fallback={listingHref} />
-    
-    <article>
-    <!-- Project Header -->
-  <header class="mb-12">
-      <div class="mb-4">
-        <span class={project.data.type === 'creative' ? 'badge badge-creative' : 'badge badge-technical'}>
-          {project.data.type === 'creative' ? 'Creative' : 'Technical'}
-        </span>
-      </div>
 
-      <h1 class="text-4xl font-medium mb-4 text-gray-900">{project.data.title}</h1>
-
-  <div class="flex flex-wrap gap-4 mb-6 meta">
-        <span>{project.data.year}</span>
-        {project.data.role && <span>• {project.data.role}</span>}
-      </div>
-
-      <p class="text-xl text-neutral-700 mb-8 leading-relaxed">
-        {project.data.summary}
-      </p>
-      
-      <!-- Tech Stack -->
-      <div class="mb-8">
-        <h2 class="meta mb-3">Tech Stack</h2>
-        <div class="flex flex-wrap gap-2">
-          {project.data.stack.map((tech: string) => (<span class="stack-tag">{tech}</span>))}
-        </div>
-      </div>
-      
-      <!-- Tags -->
-      {project.data.tags && project.data.tags.length > 0 && (
-        <div class="mb-8">
-          <h2 class="meta mb-3">Tags</h2>
-          <div class="flex flex-wrap gap-2">
-            {project.data.tags.map((tag: string) => (<span class="tag">{tag}</span>))}
-          </div>
-        </div>
-      )}
-      
-      <!-- Project Links -->
-      {project.data.links && (
-    <div class="flex flex-wrap gap-4">
-          {project.data.links.repo && (
-            <a 
-              href={project.data.links.repo} 
-              target="_blank" 
-              rel="noopener noreferrer"
-      class="btn btn-primary"
-            >
-              View Repository
-            </a>
-          )}
-          {project.data.links.live && (
-            <a 
-              href={project.data.links.live} 
-              target="_blank" 
-              rel="noopener noreferrer"
-      class="btn btn-outline"
-            >
-              Live Demo
-            </a>
-          )}
-          {project.data.links.caseStudy && (
-            <a 
-              href={project.data.links.caseStudy} 
-              target="_blank" 
-              rel="noopener noreferrer"
-      class="btn btn-outline"
-            >
-              Case Study
-            </a>
-          )}
-        </div>
-      )}
-    </header>
-    
-    <!-- Project Content -->
-    <div class="prose prose-neutral max-w-none">
-      <Content />
-    </div>
-
-    {galleryImages.length > 0 && (
-      <section class="mt-16 gallery-section">
-        <h2 class="text-2xl font-semibold mb-6 heading-display">Gallery</h2>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {galleryImages.map((item: any, index: number) => (
-            <figure class="gallery-item">
-              <button 
-                class="block group w-full border-0 bg-transparent p-0 cursor-pointer" 
-                onclick={`openLightbox(${index})`}
-                aria-label={`View larger image: ${item.alt}`}
-              >
-                <Image src={item.asset} alt={item.alt} widths={[400, 800, 1200]} sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" class="gallery-img" loading="lazy" decoding="async" />
-                {item.caption && <figcaption class="caption">{item.caption}</figcaption>}
-              </button>
-            </figure>
-          ))}
-        </div>
-      </section>
-    )}
-    
-    <!-- Back to the project's listing page -->
-    <footer class="mt-16 pt-8 border-t border-neutral-200">
-      <a 
-        href={listingHref} 
-        class="inline-flex items-center text-neutral-600 hover:text-neutral-900 transition-colors"
-      >
-        ← Back to {listingLabel}
-      </a>
-    </footer>
-  </article>
+  <div class="mx-auto max-w-[92%]">
+    <div class="w-full h-px bg-gray-300"></div>
   </div>
 
-  <!-- Lightbox Overlay -->
-  {galleryImages.length > 0 && (
-    <div id="lightbox" class="lightbox-overlay">
-      <div class="lightbox-container">
-        <button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
-        </button>
-        
-        <button id="lightbox-prev" class="lightbox-nav lightbox-prev" aria-label="Previous image">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
-        
-        <button id="lightbox-next" class="lightbox-nav lightbox-next" aria-label="Next image">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 18l6-6-6-6"/>
-          </svg>
-        </button>
-        
-        <div class="lightbox-content">
-          <img id="lightbox-image" src="" alt="" class="lightbox-image" />
-          <div id="lightbox-caption" class="lightbox-caption"></div>
-          <div id="lightbox-counter" class="lightbox-counter"></div>
-        </div>
+  <section class="mx-auto max-w-[92%] pt-2 pb-8">
+    <article class:list={['project-layout', !hasMedia && 'is-textonly']}>
+
+      <!-- Left column, upper: identity -->
+      <div class="col-head">
+        <a href={listingHref} class="back-link">← {listingLabel}</a>
+        <p class="type-row"><span class="chip chip-solid">{data.type}</span></p>
+        <h1 class="project-title">{data.title}</h1>
+        <p class="project-meta">
+          <span>{data.year}</span>
+          {data.role && <span class="dot">·</span>}
+          {data.role && <span>{data.role}</span>}
+        </p>
+        <p class="project-summary">{data.summary}</p>
       </div>
+
+      {hasMedia && (
+        <div class="col-stage">
+          <figure class="stage">
+            <button
+              type="button"
+              class="stage-frame"
+              id="stage-frame"
+              aria-label="View this image full screen"
+            >
+              <img
+                id="stage-image"
+                src={first.src}
+                srcset={first.srcset}
+                sizes={stageSizes}
+                width={first.width}
+                height={first.height}
+                alt={first.alt}
+                fetchpriority="high"
+                decoding="async"
+              />
+            </button>
+            <figcaption class="stage-meta">
+              <span id="stage-caption" class="stage-caption">{first.caption}</span>
+              <span id="stage-counter" class="stage-counter">
+                {String(1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
+              </span>
+            </figcaption>
+          </figure>
+        </div>
+      )}
+
+      {hasMedia && (
+        <nav class="col-rail" aria-label="Project images">
+          <ul class="rail-list">
+            {images.map((item, i) => (
+              <li>
+                <button
+                  type="button"
+                  class:list={['rail-thumb', i === 0 && 'is-shown']}
+                  data-index={i}
+                  aria-current={i === 0 ? 'true' : undefined}
+                  aria-label={`Show image ${i + 1} of ${images.length}: ${item.alt}`}
+                >
+                  <Image src={item.asset} alt="" widths={[72, 144]} sizes="72px" loading="lazy" decoding="async" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      <!-- Left column, lower: everything you read -->
+      <div class="col-body">
+        {hasBody && (
+          <section class="block">
+            <h2 class="label">Overview</h2>
+            <div class="project-prose"><Content /></div>
+          </section>
+        )}
+
+        {data.stack?.length > 0 && (
+          <section class="block">
+            <h2 class="label">{toolsLabel}</h2>
+            <ul class="chip-row">
+              {data.stack.map((tech: string) => <li><span class="chip chip-outline">{tech}</span></li>)}
+            </ul>
+          </section>
+        )}
+
+        {data.tags?.length > 0 && (
+          <section class="block">
+            <h2 class="label">Tags</h2>
+            <ul class="chip-row">
+              {data.tags.map((tag: string) => <li><span class="chip chip-outline">{tag}</span></li>)}
+            </ul>
+          </section>
+        )}
+
+        {(data.links?.repo || data.links?.live || data.links?.caseStudy) && (
+          <section class="block">
+            <h2 class="label">Links</h2>
+            <ul class="link-list">
+              {data.links.repo && (
+                <li><a href={data.links.repo} target="_blank" rel="noopener noreferrer">Repository <span aria-hidden="true">↗</span></a></li>
+              )}
+              {data.links.live && (
+                <li><a href={data.links.live} target="_blank" rel="noopener noreferrer">Live site <span aria-hidden="true">↗</span></a></li>
+              )}
+              {data.links.caseStudy && (
+                <li><a href={data.links.caseStudy} target="_blank" rel="noopener noreferrer">Case study <span aria-hidden="true">↗</span></a></li>
+              )}
+            </ul>
+          </section>
+        )}
+      </div>
+    </article>
+  </section>
+
+  {hasMedia && (
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Full screen image">
+      <button id="lightbox-close" class="lightbox-close" aria-label="Close">✕</button>
+      <button id="lightbox-prev" class="lightbox-nav lightbox-prev" aria-label="Previous image">←</button>
+      <button id="lightbox-next" class="lightbox-nav lightbox-next" aria-label="Next image">→</button>
+      <img id="lightbox-image" src="" alt="" />
+      <p id="lightbox-meta" class="lightbox-meta"></p>
     </div>
   )}
 </Layout>
 
-<script define:vars={{ gallery: lightboxItems }}>
-  let currentImageIndex = 0;
-  const totalImages = gallery.length;
-  
-  function openLightbox(index) {
-    currentImageIndex = index;
-    const lightbox = document.getElementById('lightbox');
-    const image = document.getElementById('lightbox-image');
-    const caption = document.getElementById('lightbox-caption');
-    const counter = document.getElementById('lightbox-counter');
-    
-    if (lightbox && image && gallery[index]) {
-      image.src = gallery[index].src;
-      image.alt = gallery[index].alt;
-      caption.textContent = gallery[index].caption || '';
-      counter.textContent = `${index + 1} / ${totalImages}`;
-      
-      lightbox.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      
-      // Focus the lightbox for accessibility
-      lightbox.focus();
+{hasMedia && (
+<script define:vars={{ images: images.map(({ src, srcset, alt, caption, width, height }) => ({ src, srcset, alt, caption, width, height })), stageSizes }}>
+  (function () {
+    const stage = document.getElementById('stage-image');
+    const caption = document.getElementById('stage-caption');
+    const counter = document.getElementById('stage-counter');
+    const thumbs = Array.from(document.querySelectorAll('.rail-thumb'));
+    const rail = document.querySelector('.col-rail');
+    const total = images.length;
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // Two pieces of state: `locked` is the reader's click, `shown` is whatever
+    // the stage is displaying right now — a hover preview, or the locked one
+    // once the pointer leaves the rail.
+    let locked = 0;
+    let shown = 0;
+
+    function show(next, { scroll = false } = {}) {
+      const i = ((next % total) + total) % total;
+      if (i === shown && stage.dataset.ready) return;
+      shown = i;
+      const item = images[i];
+
+      // sizes/srcset before src, or the browser fires a request for src and
+      // then a second one once the candidate list arrives.
+      stage.sizes = stageSizes;
+      stage.srcset = item.srcset;
+      stage.src = item.src;
+      stage.width = item.width;
+      stage.height = item.height;
+      stage.alt = item.alt;
+      stage.dataset.ready = '1';
+
+      // Fade in only when the file still has to arrive. Blanking a cached
+      // image would make every hover blink.
+      if (stage.complete) {
+        stage.style.opacity = '1';
+      } else {
+        stage.style.opacity = '0';
+        stage.onload = () => { stage.style.opacity = '1'; };
+        stage.onerror = () => { stage.style.opacity = '1'; };
+      }
+
+      caption.textContent = item.caption;
+      counter.textContent = `${pad(i + 1)} / ${pad(total)}`;
+
+      thumbs.forEach((t, ti) => t.classList.toggle('is-shown', ti === i));
+
+      if (scroll && thumbs[i]) {
+        thumbs[i].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      }
+      if (lightbox.classList.contains('is-open')) paintLightbox();
     }
-  }
-  
-  function closeLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-      lightbox.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-  }
-  
-  function nextImage() {
-    currentImageIndex = (currentImageIndex + 1) % totalImages;
-    openLightbox(currentImageIndex);
-  }
-  
-  function prevImage() {
-    currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
-    openLightbox(currentImageIndex);
-  }
-  
-  // Event listeners
-  document.addEventListener('DOMContentLoaded', () => {
-    const lightbox = document.getElementById('lightbox');
-    const closeBtn = document.getElementById('lightbox-close');
-    const prevBtn = document.getElementById('lightbox-prev');
-    const nextBtn = document.getElementById('lightbox-next');
-    
-    // Hide navigation buttons if only one image
-    if (totalImages <= 1) {
-      if (prevBtn) prevBtn.classList.add('hidden');
-      if (nextBtn) nextBtn.classList.add('hidden');
-    }
-    
-    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
-    if (prevBtn) prevBtn.addEventListener('click', prevImage);
-    if (nextBtn) nextBtn.addEventListener('click', nextImage);
-    
-    // Close lightbox when clicking outside the image
-    if (lightbox) {
-      lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-          closeLightbox();
-        }
+
+    function lock(next, opts) {
+      show(next, opts);
+      locked = shown;
+      thumbs.forEach((t, ti) => {
+        if (ti === locked) t.setAttribute('aria-current', 'true');
+        else t.removeAttribute('aria-current');
       });
     }
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (!lightbox || !lightbox.classList.contains('active')) return;
-      
-      switch (e.key) {
-        case 'Escape':
-          closeLightbox();
-          break;
-        case 'ArrowLeft':
-          prevImage();
-          break;
-        case 'ArrowRight':
-          nextImage();
-          break;
-      }
+
+    thumbs.forEach((t) => {
+      const i = Number(t.dataset.index);
+      t.addEventListener('click', () => lock(i));
+      // Preview on hover; a touch tap fires pointerenter too, and there the
+      // click that follows is the real intent.
+      t.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'touch') return;
+        show(i);
+      });
     });
-  });
-  
-  // Make openLightbox globally available
-  window.openLightbox = openLightbox;
+    rail.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'touch') return;
+      show(locked);
+    });
+
+    // ---- Full screen view -------------------------------------------------
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxMeta = document.getElementById('lightbox-meta');
+    const frame = document.getElementById('stage-frame');
+
+    function paintLightbox() {
+      const item = images[shown];
+      lightboxImage.sizes = '100vw';
+      lightboxImage.srcset = item.srcset;
+      lightboxImage.src = item.src;
+      lightboxImage.alt = item.alt;
+      lightboxMeta.textContent = [item.caption, `${pad(shown + 1)} / ${pad(total)}`].filter(Boolean).join('  ·  ');
+    }
+
+    function openLightbox() {
+      paintLightbox();
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('lightbox-close').focus();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+      frame.focus();
+    }
+
+    frame.addEventListener('click', openLightbox);
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-prev').addEventListener('click', () => lock(shown - 1, { scroll: true }));
+    document.getElementById('lightbox-next').addEventListener('click', () => lock(shown + 1, { scroll: true }));
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+    if (total <= 1) {
+      document.getElementById('lightbox-prev').hidden = true;
+      document.getElementById('lightbox-next').hidden = true;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) return closeLightbox();
+      // Arrow keys drive the stage anywhere on the page, but never while the
+      // reader is typing or tabbing through links.
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+      if (typing || total <= 1) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); lock(shown - 1, { scroll: true }); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); lock(shown + 1, { scroll: true }); }
+    });
+  })();
 </script>
+)}
 
 <style>
-  .project-cover-wrapper { position:relative; background:var(--cover-bg, linear-gradient(135deg,#f1f5f9,#e2e8f0)); border:1px solid var(--tw-prose-hr,#e5e7eb); border-radius:1rem; overflow:hidden; }
-  .project-cover-img { width:100%; height:100%; display:block; object-fit:cover; aspect-ratio:4/3; }
-  .project-cover-img.creative { object-fit:contain; padding:1rem; background:rgba(255,255,255,0.6); mix-blend:normal; }
-  .gallery-section { border-top:1px solid var(--tw-prose-hr,#e5e7eb); padding-top:2.5rem; }
-  .gallery-item { position:relative; }
-  .gallery-img { width:100%; height:100%; display:block; object-fit:cover; border:1px solid #e5e7eb; border-radius:0.75rem; aspect-ratio:4/3; background:#f8fafc; transition: transform .4s cubic-bezier(.4,0,.2,1), box-shadow .4s; }
-  .gallery-item button:hover .gallery-img { transform:translateY(-4px); box-shadow:0 4px 16px -4px rgba(0,0,0,.15); }
-  .caption { font-size:.75rem; line-height:1.2; margin-top:.4rem; color:#64748b; }
-  
-  /* Lightbox Styles */
-  .lightbox-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+  /* ---------------------------------------------------------------------
+     Layout: text left, one large image centre, image selector right.
+     The stage and rail stay put while the left column scrolls.
+     ------------------------------------------------------------------- */
+  .project-layout {
+    /* Clears the nav at its tallest — both bars visible. Pinning any higher
+       slides the image under the bar the moment the reader scrolls back up. */
+    --stage-top: 9.75rem;
+    --stage-h: calc(100vh - var(--stage-top) - 2rem);
+    --thumb: 4.5rem;
+
+    display: grid;
+    grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "head stage rail"
+      "body stage rail";
+    column-gap: 2.5rem;
+  }
+
+  .project-layout.is-textonly {
+    grid-template-columns: minmax(0, 42rem);
+    grid-template-areas: "head" "body";
+  }
+
+  .col-head { grid-area: head; }
+  .col-body { grid-area: body; padding-top: 2rem; }
+
+  /* --- Left column -------------------------------------------------- */
+  .back-link {
+    display: inline-block;
+    font-size: var(--text-xs);
+    color: var(--color-text-label);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: color .2s ease;
+  }
+  .back-link:hover { color: var(--color-text-primary); }
+
+  .type-row { margin: 0 0 0.6rem; }
+
+  .project-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.4rem 0 0;
+    font-size: var(--text-xs);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--color-text-label);
+  }
+  .project-meta .dot { opacity: .6; }
+
+  .project-summary {
+    margin: 0.9rem 0 0;
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  .block { margin-bottom: 1.75rem; }
+  .block:last-child { margin-bottom: 0; }
+  .block > .label { margin-bottom: 0.4rem; }
+
+  .chip-row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .link-list { list-style: none; margin: 0; padding: 0; }
+  .link-list a {
+    font-size: var(--text-base);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-rule);
+    transition: border-color .2s ease;
+  }
+  .link-list a:hover { border-color: var(--color-text-primary); }
+  .link-list li + li { margin-top: 0.25rem; }
+
+  /* --- Markdown body ------------------------------------------------ */
+  .project-prose { margin-top: 0.4rem; }
+  .project-prose :global(p),
+  .project-prose :global(li) {
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+  .project-prose :global(p) { margin: 0 0 0.75rem; }
+  .project-prose :global(p:last-child) { margin-bottom: 0; }
+  .project-prose :global(h2) {
+    margin: 1.5rem 0 0.4rem;
+    font-size: var(--text-base);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--color-text-label);
+  }
+  .project-prose :global(h3),
+  .project-prose :global(h4) {
+    margin: 1.1rem 0 0.3rem;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .project-prose :global(ul),
+  .project-prose :global(ol) { margin: 0 0 0.75rem; padding-left: 1.1rem; }
+  .project-prose :global(ul) { list-style: disc; }
+  .project-prose :global(ol) { list-style: decimal; }
+  .project-prose :global(li) { margin-bottom: 0.35rem; }
+  .project-prose :global(li::marker) { color: var(--color-text-label); }
+  .project-prose :global(strong) { color: var(--color-text-primary); font-weight: 600; }
+  .project-prose :global(a) { color: var(--color-text-primary); text-decoration: underline; }
+  .project-prose :global(code) {
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    font-size: var(--text-xs);
+    background: #f3f4f6;
+    padding: 0.1rem 0.3rem;
+    border-radius: var(--radius-chip);
+  }
+  .project-prose :global(hr) { border: 0; border-top: 1px solid var(--color-rule); margin: 1.5rem 0; }
+  .project-prose :global(img) { max-width: 100%; height: auto; }
+
+  /* --- Stage -------------------------------------------------------- */
+  .col-stage {
+    grid-area: stage;
+    position: sticky;
+    top: var(--stage-top);
+    align-self: start;
+    height: var(--stage-h);
+  }
+
+  .stage { margin: 0; display: flex; flex-direction: column; height: 100%; min-height: 0; }
+
+  .stage-frame {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+  .stage-frame:focus-visible { outline: 2px solid var(--color-text-primary); outline-offset: 4px; }
+
+  .stage-frame img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    opacity: 1;
+    transition: opacity .25s ease;
+  }
+
+  .stage-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-label);
+  }
+  .stage-caption { color: var(--color-text-secondary); }
+  .stage-counter { letter-spacing: 0.06em; white-space: nowrap; }
+
+  /* --- Rail --------------------------------------------------------- */
+  .col-rail {
+    grid-area: rail;
+    position: sticky;
+    top: var(--stage-top);
+    align-self: start;
+    max-height: var(--stage-h);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+  .col-rail::-webkit-scrollbar { display: none; }
+
+  .rail-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rail-thumb {
+    display: block;
+    width: var(--thumb);
+    height: var(--thumb);
+    padding: 0;
+    border: 0;
+    background: #f3f4f6;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .rail-thumb img {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    object-fit: cover;
+    filter: grayscale(1);
+    opacity: 0.55;
+    transition: filter .2s ease, opacity .2s ease;
+  }
+
+  /* Exactly one thumb is ever in colour: the one on the stage. Hovering moves
+     it there, so no separate :hover rule and no ring on the locked choice. */
+  .rail-thumb.is-shown img { filter: grayscale(0); opacity: 1; }
+  .rail-thumb:focus-visible { outline: 2px solid var(--color-text-primary); outline-offset: -2px; }
+
+  /* --- Full screen -------------------------------------------------- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
     z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-  }
-  
-  .lightbox-overlay.active {
-    opacity: 1;
-    visibility: visible;
-  }
-  
-  .lightbox-container {
-    position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .lightbox-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 100%;
-    max-height: 100%;
-  }
-  
-  .lightbox-image {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-    border-radius: 0.5rem;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  }
-  
-  .lightbox-caption {
-    color: white;
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.875rem;
-    max-width: 80vw;
-  }
-  
-  .lightbox-counter {
-    color: rgba(255, 255, 255, 0.7);
-    text-align: center;
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-  }
-  
-  .lightbox-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    color: white;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    z-index: 1001;
+    gap: 1rem;
+    padding: 3.5rem 1rem;
+    background: rgba(251, 251, 251, 0.97);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
   }
-  
-  .lightbox-close:hover {
-    background: rgba(0, 0, 0, 0.9);
-  }
-  
+  .lightbox.is-open { opacity: 1; visibility: visible; }
+  .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .lightbox-meta { margin: 0; font-size: var(--text-xs); color: var(--color-text-label); }
+
+  .lightbox-close,
   .lightbox-nav {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    color: white;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: none;
+    border: 0;
     cursor: pointer;
-    transition: background 0.2s ease;
-    z-index: 1001;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0.75rem;
   }
-  
-  .lightbox-nav:hover {
-    background: rgba(0, 0, 0, 0.9);
-  }
-  
-  .lightbox-prev {
-    left: 1rem;
-  }
-  
-  .lightbox-next {
-    right: 1rem;
-  }
-  
-  /* Hide navigation buttons if only one image */
-  .lightbox-nav.hidden {
-    display: none;
-  }
-  
-  /* Mobile responsiveness */
-  @media (max-width: 768px) {
-    .lightbox-close {
-      top: 0.5rem;
-      right: 0.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
+  .lightbox-close { top: 1rem; right: 1.25rem; }
+  .lightbox-prev { left: 1rem; top: 50%; transform: translateY(-50%); }
+  .lightbox-next { right: 1rem; top: 50%; transform: translateY(-50%); }
+  .lightbox-nav[hidden] { display: none; }
+
+  /* --- Below desktop ------------------------------------------------- */
+  @media (max-width: 1023px) {
+    .project-layout {
+      --thumb: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
-    
-    .lightbox-nav {
-      width: 2.5rem;
-      height: 2.5rem;
+    .col-head { order: 1; }
+    .col-stage { order: 2; }
+    .col-rail  { order: 3; }
+    .col-body  { order: 4; padding-top: 0; }
+
+    /* align-self:start would shrink these to content width in a column flex
+       container — a 10-thumb rail would then push the page sideways. */
+    .col-stage {
+      position: static;
+      align-self: stretch;
+      height: auto;
     }
-    
-    .lightbox-prev {
-      left: 0.5rem;
+    .stage-frame img { max-height: 60vh; }
+
+    .col-rail {
+      position: static;
+      align-self: stretch;
+      max-width: 100%;
+      max-height: none;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
-    
-    .lightbox-next {
-      right: 0.5rem;
-    }
-    
-    .lightbox-image {
-      max-height: 70vh;
-    }
+    .rail-list { flex-direction: row; }
+    .rail-thumb { flex: 0 0 auto; }
+
+    .back-link { margin-bottom: 1rem; }
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
-    .gallery-item button:hover .gallery-img { transform:none; box-shadow:none; }
-    .lightbox-overlay { transition: none; }
+    .stage-frame img,
+    .rail-thumb img,
+    .lightbox { transition: none; }
   }
 </style>

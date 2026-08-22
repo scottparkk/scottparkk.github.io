@@ -23,9 +23,6 @@ draft: false
 order: 700
 ---
 
-## Overview
-
-
 - Developed the logic of various mini-games and features like in-game score counting and a high score table.
 
 - Won 1st place in the Game Developers Alliance Showcase (2023) [https://store.steampowered.com/app/2309270/UC_Love/]

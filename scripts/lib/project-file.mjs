@@ -106,7 +106,11 @@ export async function writeProjectFile({ projectRoot, slug, data, body, overwrit
     if (exists) throw new Error(`${slug}.md already exists — pick a different title or allow overwrite`);
   }
 
-  const content = `---\n${serializeFrontmatter(data)}\n---\n\n${body || '## Overview\n\nAdd detail here.\n'}`;
+  // Body is prose only — no "## Overview" heading. The project page renders
+  // that label itself, so a heading here would print twice. An empty body is
+  // valid: the page simply omits the Overview block.
+  const prose = (body || '').trim();
+  const content = `---\n${serializeFrontmatter(data)}\n---\n${prose ? `\n${prose}\n` : ''}`;
   await mkdir(dir, { recursive: true });
   await writeFile(file, content, 'utf8');
   return file;

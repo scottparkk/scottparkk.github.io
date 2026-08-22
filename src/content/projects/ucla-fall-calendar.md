@@ -16,7 +16,3 @@ gallery:
 draft: false
 order: 1170
 ---
-
-## Overview
-
-

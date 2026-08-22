@@ -6,20 +6,30 @@ summary: "Headless WordPress + Next.js website for a graphic design studio, with
 stack: ["NextJS", "TypeScript", "TailwindCSS", "WordPress", "Nodemailer", "Vercel"]
 role: "Freelance Web Developer"
 tags: ["web-development", "nextjs", "typescript", "react", "javascript"]
-cover: "/images/projects/technical/UnboxeDesign/Cover.webp"
+cover: "/images/projects/technical/UnboxeDesign/hero.webp"
 coverAlt: "unboxedesign studio website homepage"
 gallery:
-  - src: "/images/projects/technical/UnboxeDesign/site.webp"
-    alt: "unboxedesign website full view"
-    caption: "Portfolio grid, services, and contact sections"
+  - src: "/images/projects/technical/UnboxeDesign/hero.webp"
+    alt: "unboxedesign homepage hero reading Think Outside The Box"
+    caption: "Home — Framer Motion hero over a looping video background"
+  - src: "/images/projects/technical/UnboxeDesign/portfolio.webp"
+    alt: "Portfolio grid showing all projects with category filter buttons"
+    caption: "Portfolio — 138 items from WordPress, filterable by category"
+  - src: "/images/projects/technical/UnboxeDesign/portfolio-web.webp"
+    alt: "Portfolio grid filtered to web design projects"
+    caption: "Filters are URL-driven, so a filtered view stays shareable"
+  - src: "/images/projects/technical/UnboxeDesign/testimonials.webp"
+    alt: "Client testimonials page"
+    caption: "Testimonials — a second WordPress collection"
+  - src: "/images/projects/technical/UnboxeDesign/contact.webp"
+    alt: "Contact page with the project enquiry form"
+    caption: "Contact — submissions go out through the studio's own SMTP"
 links:
   live: "https://unboxedesign.com"
 featured: false
 draft: false
 order: 20
 ---
-
-## Overview
 
 Built the production website for [unboxedesign](https://unboxedesign.com), a boutique graphic design studio. The site uses Next.js 16 as a headless front-end against a WordPress CMS hosted on a separate subdomain, pulling portfolio items, testimonials, and client data via the WP REST API.
 

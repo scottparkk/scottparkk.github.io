@@ -14,6 +14,3 @@ gallery:
   - src: "/images/projects/creative/serpent-artwork/serpent.jpg"
     alt: "Serpent Artwork - serpent"
 ---
-## Overview
-
-

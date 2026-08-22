@@ -17,5 +17,3 @@ gallery:
   - src: "/images/projects/creative/wild-wild-westwood/www2.webp"
     alt: "Wild Wild Westwood - www2"
 ---
-## Overview
-

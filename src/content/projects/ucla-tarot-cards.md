@@ -19,5 +19,3 @@ gallery:
   - src: "/images/projects/creative/ucla-tarot-cards/tarot3.webp"
     alt: "UCLA Tarot Cards - tarot3"
 ---
-## Overview
-

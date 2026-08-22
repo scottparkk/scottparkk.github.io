@@ -14,4 +14,3 @@ gallery:
   - src: "/images/projects/creative/spotify-wrapped-x-ucla/spotify.webp"
     alt: "Spotify Wrapped x UCLA - spotify"
 ---
-## Overview

@@ -14,7 +14,5 @@ gallery:
   - src: "/images/projects/creative/adventure-time-x-ucla/adventuretime.webp"
     alt: "Adventure Time x UCLA - adventuretime"
 ---
-## Overview
-
 
 This piece was created as an illustration for UCLA Student Affairs social media. Finn and Jake from 'Adventure Time' are drawn inside Royce Quad at UCLA.

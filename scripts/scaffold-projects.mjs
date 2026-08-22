@@ -118,7 +118,8 @@ async function scaffoldFolder(folderPath) {
   };
 
   // One definition of valid frontmatter, shared with tools/studio.
-  const body = `---\n${serializeFrontmatter(frontmatter)}\n---\n\n## Overview\n\nAdd detailed content here. Replace placeholders above.\n`;
+  // Prose only — the project page renders the "Overview" label itself.
+  const body = `---\n${serializeFrontmatter(frontmatter)}\n---\n\nAdd detailed content here. Replace placeholders above.\n`;
   await ensureDir(PROJECTS_MD_DIR);
   await fs.writeFile(outFile, body, 'utf8');
   console.log(`Created ${outFile}`);

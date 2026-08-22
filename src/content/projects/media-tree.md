@@ -2,7 +2,7 @@
 title: "Media Tree"
 type: "technical"
 year: 2025
-summary: "Interactive media organization platform with hierarchical tree structure"
+summary: "Turns an Excel export of media records into a searchable, cached tree view"
 stack: ["React", "Node.js", "Flask"]
 role: "Full Stack Developer"
 tags: ["react", "nodejs", "flask", "web-development", "python", "javascript"]
@@ -23,35 +23,17 @@ draft: false
 order: 50
 ---
 
-## Overview
+Media Tree takes a spreadsheet of media records and turns it into something you can actually navigate. Upload an Excel file and it renders the hierarchy as a searchable tree, with counts and age breakdowns next to it.
 
-Media Tree is a web application for managing and visualizing hierarchical media data from Excel files. Features intelligent caching, file upload capabilities, and an intuitive tree-view interface.
+## Features
 
-##  Features
+- **Excel upload**: drag and drop or browse, .xlsx and .xls, with progress shown while the file parses
+- **Caching**: the first upload takes 5 to 10 seconds, after that the same file loads in under a second. Files are matched by content hash rather than filename, so renaming one doesn't cost a re-parse
+- **Persistent cache**: processed data is pickled to disk, so it survives restarts and deploys
+- **Tree view**: search and filter across the hierarchy, and follow parent and child relationships
+- **Stats**: counts by type, format and category, plus how content is distributed by creation date
+- **Export**: download the processed data
 
-###  **Excel File Management**
-- **Upload Interface**: Drag & drop or browse to upload Excel files
-- **Multiple Formats**: Supports .xlsx and .xls files
-- **Real-time Processing**: Watch upload progress in real-time
+## Stack
 
-###  **Intelligent Caching System**
-- **Lightning Fast**: First load processes file (5-10s), subsequent loads instant (<1s)
-- **Duplicate Detection**: Files identified by content hash, not filename
-- **Persistent Cache**: Survives server restarts and deployments
-- **Smart Storage**: Processed data cached using Python pickle format
-
-###  **Interactive Tree View**
-- **Hierarchical Display**: Navigate complex organizational structures
-- **Search & Filter**: Find specific nodes quickly
-- **Statistics Dashboard**: View media counts, age distribution, and more
-- **Responsive Design**: Works on desktop and mobile devices
-
-###  **Analytics & Insights**
-- **Media Statistics**: Count by type, format, and category
-- **Age Analysis**: Distribution of content by creation date
-- **File Relationships**: Visualize parent-child hierarchies
-- **Export Capabilities**: Download processed data
-
-## Technical Implementation
-
-Built with modern web technologies including React for the frontend, Node.js and Python Flask the backend.
+React on the front end, Node.js and Python Flask on the back.

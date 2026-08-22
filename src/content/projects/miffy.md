@@ -23,6 +23,4 @@ draft: false
 order: 71
 ---
 
-## Overview
-
 Choose your adventure style videogame created with tinyJS and Blender.
